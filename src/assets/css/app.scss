@@ -1,0 +1,87 @@
+@font-face {
+    font-family: RobotoRegular;
+    src: url(../fonts/Roboto-Regular.ttf);
+  }
+@font-face {
+    font-family: RobotoBlack;
+    src: url(../fonts/Roboto-Black.ttf);
+  }
+@font-face {
+    font-family: RobotoLight;
+    src: url(../fonts/Roboto-Light.ttf);
+  }
+@font-face {
+    font-family: RobotoMedium;
+    src: url(../fonts/Roboto-Medium.ttf);
+  }
+
+:root {
+  --background-color:#cdefff;
+  --primary-color:#2ca6df;
+  --secondary-color:#86969c;
+  --error-color:#ff5252;
+  --background-error-color:#ff52524f;
+  --success-color:#27ae60;
+  --warning-color:#f9aa33;
+  --info-color:#0077ad;
+  --light-color:#f8f9fa;
+  --dark-color:#212529;
+  --top-bar-height:5vh;
+}
+
+$theme-colors: (
+  "primary": #2ca6df, 
+  "secondary": #86969c, 
+  "danger": #ff5252, 
+  "warning": #f9aa33, 
+  "success": #27ae60, 
+  "info": #0077ad, 
+  "light":#f8f9fa,
+  "dark":#212529,
+);
+ 
+@import 'node_modules/bootstrap/scss/bootstrap.scss';
+
+
+
+
+
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    font-family: RobotoRegular;
+   
+}
+
+.form-check-input:checked {
+  background-color: #2ca6df;
+  border-color: #2ca6df;
+}
+
+.ripple-test {
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0);       
+  background-color: rgba(255, 255, 255, 0.5);
+  z-index: 20;         
+  animation: ripple 600ms linear;
+}
+
+@keyframes ripple {
+  to {
+      transform: scale(4);
+      opacity: 0;
+  }
+}
+
+
+@media screen and (max-width:540px) {
+    html{
+      font-size: 0.750em;
+    }
+}

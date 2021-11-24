@@ -1,0 +1,43 @@
+.game-layout{
+    display: grid;
+    background-color: var(--background-color);
+    height: calc(100vh - var(--top-bar-height));
+    grid-template-columns: repeat(3,1fr);
+    grid-template-rows: repeat(8,1fr);
+    grid-template-areas: 
+    "info display display"
+    "info display display"
+    "info display display"
+    "info controls controls"
+    "info controls controls"
+    "info controls controls"
+    "info controls controls"
+    "info controls controls";
+}
+
+.game-layout-info{
+    outline: 1px solid steelblue;
+    grid-area: info;
+}
+.game-layout-display{
+    outline: 1px solid aquamarine;
+    grid-area: display;
+}
+.game-layout-controls{
+    outline: 1px solid darkcyan;
+    grid-area: controls;
+}
+
+@media screen and (max-width:1300px) {
+    .game-layout{
+        grid-template-areas: 
+        "display display display"
+        "display display display"
+        "info     info       info"
+        "info     info       info"
+        "controls controls controls"
+        "controls controls controls"
+        "controls controls controls"
+        "controls controls controls";
+    }
+}
