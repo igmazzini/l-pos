@@ -8,8 +8,7 @@
 </template>
 
 <script>
-export default {
-    name:'DisplayNumberComponent',
+export default {   
     props:{
         numbers:Array
     }  
@@ -20,15 +19,14 @@ export default {
 <style lang="scss" scoped>
     .display-numbers{          
         display: flex;
-        align-items: center;
-        justify-content: flex-start;
+        align-items: flex-start;
+        justify-content: center;
     }
     .display-number{
-        width: 10.5rem;
-        height: 10.5rem;
-        margin-left: 10px;
+        width: 11rem;
+        height: 11rem;        
         border-radius: 50%;
-        font-size: 4.9rem;
+        font-size: 6rem;
         font-family: RobotoLight;
         color:var(--info-color);
         background-image: radial-gradient(#fff,#cfcdcd);
@@ -37,6 +35,14 @@ export default {
         align-items: center;
         justify-content: center;
         
+    }
+
+    @media screen and (max-width: 1300px) {
+        .display-number{
+            width: 8em;
+            height: 1.8em;  
+            font-size: 4em;
+        }
     }
 
 </style>

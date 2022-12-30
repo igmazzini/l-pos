@@ -20,6 +20,8 @@
   --primary-color:#2ca6df;
   --secondary-color:#86969c;
   --error-color:#ff5252;
+  --disabled-text-color:#413c3c;
+  --disabled-background-color:rgba(65,60,60,.3);
   --background-error-color:#ff52524f;
   --success-color:#27ae60;
   --warning-color:#f9aa33;
@@ -43,6 +45,9 @@ $theme-colors: (
 @import 'node_modules/bootstrap/scss/bootstrap.scss';
 
 
+.animate__animated.animate__faster {
+  --animate-duration: 300ms;
+}
 
 
 
@@ -55,12 +60,13 @@ $theme-colors: (
 
 body{
     font-family: RobotoRegular;
+    background-color: var(--background-color);
    
 }
 
 .form-check-input:checked {
-  background-color: #2ca6df;
-  border-color: #2ca6df;
+  background-color: primary;
+  border-color: primary;
 }
 
 .ripple-test {
@@ -72,6 +78,34 @@ body{
   animation: ripple 600ms linear;
 }
 
+.btn-check:focus + .btn, .btn:focus {
+  outline: 0;
+  box-shadow: none;
+}
+
+.btn:disabled, .btn.disabled, fieldset:disabled .btn {
+  pointer-events: none; 
+  color: var(--disabled-text-color);
+  background-color: var(--disabled-background-color)!important;
+}
+.btn:disabled, .btn.disabled, fieldset:disabled .btn  {  
+  color: var(--disabled-text-color) !important;
+  
+}
+
+.btn:disabled .keyboard-icon, .btn.disabled .keyboard-icon {  
+  color: var(--disabled-text-color) !important;
+  
+}
+
+.divider{
+  height: 1px;
+  width: 90%;
+  margin: 0 auto;
+  opacity: 0.3;
+  background-color: var(--secondary-color);
+}
+
 @keyframes ripple {
   to {
       transform: scale(4);
@@ -80,8 +114,24 @@ body{
 }
 
 
+@media screen and (max-width:1920px) {
+    html{
+      font-size: 1em;
+    }
+}
+
+@media screen and (max-width:1700px) {
+  html{
+    font-size: 0.9em;
+  }
+}
+@media screen and (max-width:1500px) {
+  html{
+    font-size: 0.680em;
+  }
+}
 @media screen and (max-width:540px) {
     html{
-      font-size: 0.750em;
+      font-size: 0.650em;
     }
 }

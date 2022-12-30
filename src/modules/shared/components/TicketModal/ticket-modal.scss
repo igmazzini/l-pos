@@ -1,0 +1,248 @@
+.ticket-modal-container {
+    background-color: rgba(0, 0, 0, 0.4);
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.ticket-modal {
+    width: 45%;
+    height: 65%;
+    border-radius: 10px;
+    background-color: var(--light-color);
+    display: grid;
+    grid-template-rows: 10% 1fr 15%;
+    margin-bottom: 70px;
+}
+
+.ticket-modal-title {
+    background-color: var(--info-color);
+    border-top-right-radius: inherit;
+    border-top-left-radius: inherit;
+    font-family: RobotoRegular;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    p {
+        color: var(--light-color);
+        padding: 0;
+        margin: 0;
+        font-size: 2em;
+    }
+}
+
+
+.ticket-modal-content {
+    display: grid;
+    grid-template-rows: 1fr 35%;
+    align-items: start;
+}
+
+
+
+
+
+
+
+.ticket-modal-content-resume {
+   
+    display: flex;
+    padding: 15px;
+    padding-top: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+
+    hr{
+        width: 95%;
+        margin: 0 auto 15px auto;
+        background-color: #ccc;
+    }
+
+    p {
+        margin: 0;
+        padding: 0;
+        font-size: 1.3em;
+        color: var(--dark-color);
+    }
+
+    p:first-child {
+        text-transform: uppercase;
+    }
+}
+
+.ticket-modal-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    font-family: RobotoBlack;
+    color: var(--light-color);
+}
+
+.cta {
+    color: inherit;
+    padding: 5px 80px;
+    font-size: 1.5em;
+    text-transform: uppercase;
+}
+
+.cta-accept {
+    background-color: var(--success-color);
+
+}
+
+.cta-cancel {
+    background-color: var(--error-color);
+
+}
+
+.ticket-container{
+    position: absolute;
+    min-width: 500px;
+    overflow: hidden;
+    pointer-events: none;
+    height: 0;
+
+}
+
+.print-ticket{
+    min-width: 500px;    
+    background-color: var(--light-color);   
+    padding-left: 10px;
+    padding-right: 10px;   
+    pointer-events: none;
+    font-family: RobotoLight;
+    font-size: 1em;
+}
+
+.print-ticket-logo{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px dashed #ccc;
+    padding-top: 15px;
+    padding-bottom: 15px;
+
+    img{
+        width: 35%;       
+        height: auto;
+    }
+
+
+    .black-and-white{
+        -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+        filter: grayscale(100%);
+    }
+}
+
+
+
+.print-ticket-totals{
+    width: 100%;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px dashed #ccc;
+
+    .print-ticket-totals-row{
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+
+        p{
+            margin: 5px 0;
+            padding: 0;
+        }
+    }
+}
+
+.print-ticket-message{
+
+    width: 100%;
+    height: 60px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px dashed #ccc;
+    font-size: 1.6em;
+
+    p{
+        margin: 0;
+        padding: 0;
+    }
+}
+
+
+.print-ticket-info{
+    width: 100%;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex-direction: column;
+
+    .print-ticket-info-row{
+        display: flex;
+        width: 100%;
+        align-items: flex-start;
+        justify-content: space-between;
+
+        p{
+            margin: 5px 0;
+            padding: 0;
+        }
+    }
+
+    .ticket-qr-value,
+    .ticket-qr{
+        margin: 10px auto;
+    }
+
+    .ticket-qr-value{
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+  
+}
+
+
+@media screen and (max-width:1100px) {
+    .ticket-modal {
+        width: 90%;
+        height: 80%;
+    }  
+
+    .ticket-modal-content-numbers {
+        padding: 5px;
+    }  
+
+    li{
+           
+        grid-template-columns: 5% 10% 1fr 20% 25% 20%;
+       
+    }
+
+    .print-ticket{
+        font-size: 1.5em;
+    }
+
+
+    .info-number {
+        width: 28px;
+        height: 28px;
+    }
+
+
+    .cta {
+        padding: 5px 15px;
+    }
+}

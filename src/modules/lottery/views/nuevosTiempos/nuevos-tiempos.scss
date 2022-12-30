@@ -1,0 +1,413 @@
+@import '@/modules/lottery/assets/css/gameLayout.scss';
+
+.game-layout:deep() {
+    gap: 10px;
+    .game-layout-info{
+       background-color: whitesmoke;
+       display: flex;
+       align-items: center;
+       justify-content: flex-start;
+       flex-direction: column;
+
+       .info-image{
+           width: 45%;          
+       }
+
+       .info-numbers-container{
+          width: 100%; 
+          height: 45%;
+          overflow: hidden;
+         
+       }
+
+       .info-numbers-container::-webkit-scrollbar {
+            //display: none;
+            width: 8px 
+        }
+        .info-numbers-container::-webkit-scrollbar-thumb{
+            background: #0076ad8c;                                 
+            border-radius: 20px;  
+            
+        }
+
+        .game-layout-info--delete{
+            width: 100%;
+            height: 100%;
+            background-color: var(--error-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: whitesmoke;
+            font-size: 4em;
+            grid-column: 16/-1;
+        }
+
+       .game-layout-info--totals{
+            display: flex;
+            width: 100%;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+
+            p{
+                text-align: left;
+                width: 100%;
+                display: inline-block;
+                margin-bottom: 0.5rem;
+            }
+            
+            p:first-child{
+                text-transform: uppercase;
+            }
+            p:last-of-type{
+                font-size: 1.5rem;
+                margin-bottom: 3rem;
+            }
+
+            .clear-button{
+                width: 90%;
+                color: whitesmoke;
+                font-family: RobotoBlack;
+                text-transform: uppercase;
+                font-size: 1.3rem;
+                background-color: var(--error-color);
+                position: relative;
+                overflow: hidden;
+            }
+       }
+
+
+       @media screen and (max-width:1300px){
+        .info-numbers-container{
+           
+            height: 100%;
+            grid-column: 1/16;
+        }
+
+       .info-numbers-container::-webkit-scrollbar {
+            //display: none;
+            width: 3px; 
+        }
+       
+
+       }
+
+     
+    }
+
+    .game-layout-display{
+        display: grid;
+        column-gap: 20px;
+        grid-template-columns: repeat(14,1fr);
+        grid-template-rows: repeat(8,1fr);     
+        padding-top: 2%;       
+        position: relative;
+        width: 99%;
+        padding-left: 1%;
+        padding-right: 1%;
+      
+
+        .display-numbers{           
+            grid-column: 1/4;  
+            grid-row: 1/6;
+            z-index: 1;
+            padding-left: 10px;
+               
+        }
+        .display-bet{
+            grid-column: 4/6;            
+            grid-row: 1/6;
+            z-index: 1;
+        }
+       
+       
+        .display-reventado-bet{
+            grid-column: 6/9;           
+            grid-row: 1/6;
+            z-index: 1;
+        }
+
+        .display-notifications{
+            grid-column: 9/-1;
+            grid-row: 1/6;
+            z-index: 1;           
+        }
+
+        .select-type{
+            grid-column: 1/-1;
+            grid-row: 7/-1;
+            z-index: 1;
+        }
+
+
+
+        @media screen and (max-width:1300px){
+            .display-numbers{    
+                grid-column: 1/5; 
+            }
+
+            .display-bet{
+                grid-column: 5/10; 
+            }
+
+            .display-reventado-bet{
+                grid-column: 10/-1; 
+
+            }
+        }
+       
+    }
+ 
+    .game-layout-display::before{
+        content: "";
+        display: block;
+        left: 0;
+        top: 2.5%;
+        width: 100%;
+        height: 89%;
+        background-color: whitesmoke;
+        border-radius: 5px;
+        position: absolute;
+       
+
+    }
+    .game-layout-controls{
+        display: grid;
+        column-gap: 50px;
+        row-gap: 15px;
+        grid-template-columns: repeat(12,1fr);
+        grid-template-rows: repeat(9,1fr);     
+        padding-top: 2%;       
+        position: relative;
+        width: 99%;
+        padding-left: 1%;
+        padding-right: 1%;
+
+        .select-bet{
+            grid-column: 1/-1;
+            grid-row: 1/2;
+            z-index: 1;
+        }
+
+        .blind-rooster{
+            background-color: var(--success-color);
+            font-size: 1.9rem;
+            color: whitesmoke;
+            font-family: RobotoBlack;
+            border-radius: 5px;
+            grid-column: 1/6;
+            grid-row: 2/3;
+            z-index: 1;
+            height: 60px;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+        }
+
+       
+
+        .control-dates{
+            grid-column: 1/6;
+            grid-row: 3/9;            
+            z-index: 1;           
+
+            .control-select-dates{
+                display: grid;  
+                height: 80%;   
+                width: 100%;              
+                column-gap: 10px;
+                row-gap: 12px;
+                grid-template-columns: repeat(3,1fr);
+                grid-template-rows: repeat(3,1fr);
+            }
+
+
+            .cotrol-date-title{           
+                
+                margin: 0;
+                margin-bottom: 10px;
+                padding: 0;
+                width: 100%;
+                font-size: 1.1rem;
+                color: black;
+                text-transform: uppercase;
+            }
+
+            .cotrol-times{               
+                z-index: 1;
+                width: 100%;
+                display: grid;
+                grid-template-columns: repeat(2,1fr);
+                padding-top: 7%;
+               
+               
+                
+                p{
+                    font-size: 1.3rem;
+                    color: black;
+                    text-transform: uppercase;
+                    margin: 0;
+                }
+
+                p:first-child{
+                    justify-self: start;
+                }
+                p:last-child{
+                    justify-self: end;
+                }
+            }
+            
+        }
+
+       
+
+        .keyboard-buttons{
+            grid-column: 6/-1;
+            grid-row: 2/9;
+            z-index: 1;
+        }
+        .control-footer{
+            grid-column: 1/-1;
+            grid-row: 9/10;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: repeat(2,1fr);
+            padding-top: 2%;
+
+            p{
+                font-size: 1rem;
+                color: rgba(0, 0, 0, 0.322);               
+                margin: 0;
+                padding: 0;
+            }
+            p:first-child{
+                justify-self: start;    
+                          
+            }
+            p:last-child{
+                justify-self: end;
+            }
+
+            .control-footer-logo{
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                padding-bottom: 3px;
+            }
+
+            .control-footer-logo img{
+                width: 5rem;
+                margin-left: 10px;
+            }
+        }
+
+        @media screen and (max-width:1300px){
+
+            .display-notifications{
+                grid-column: 1/-1;
+                grid-row: 1/2;
+                z-index: 1;
+            }
+            .select-type{
+                grid-column: 1/16;
+                grid-row: 2/3;
+                z-index: 1;
+
+                .select-buttons{
+                    height: 100%;
+                }
+
+            }
+            .blind-rooster{
+                grid-column: 1/10;
+                grid-row: 3/4;
+                height: 100%;
+            }
+
+            .select-bet{
+                grid-column: 10/16;
+                grid-row: 3/4;
+               
+            }
+            .game-layout-controls-dates--button{
+                grid-column: 16/-1;
+                grid-row: 2/4;                              
+                height: 100%;
+                font-size: 5em;
+                color: whitesmoke;               
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: var(--info-color);
+               
+            }
+            .keyboard-buttons{
+                grid-column: 1/-1;
+                grid-row: 4/-1;
+                padding-bottom: 3px;
+            }
+        }
+       
+    }
+
+    .game-layout-controls::before{
+        content: "";
+        display: block;
+        left: 0;
+        top: 11%;
+        width: 100%;
+        height: 82%;
+        background-color: whitesmoke;
+        border-radius: 5px;
+        position: absolute;
+       
+
+    }
+
+    @media screen and (max-width:1300px){
+        .game-layout-display{
+            width: 100%;
+            background-color: whitesmoke;
+        }
+        .game-layout-display::before{
+            display: none;
+        }
+        .game-layout-info{
+            width: 100%;
+            border-top: 1px solid #ccc;           
+            position: relative;           
+            display: grid;
+            padding-left: 3px;
+            padding-right: 3px;
+            justify-items: end;
+            grid-template-columns: repeat(17, 1fr);
+            gap: 7px;
+        }
+        .game-layout-controls{
+            width: 100%;
+            padding-left: 3px;
+            padding-right: 3px;
+            background-color: whitesmoke;
+            grid-template-columns: repeat(17,1fr);
+            grid-template-rows: repeat(3,10%) 1fr;
+            gap: 7px;
+
+            
+
+            
+        }
+        .game-layout-controls::before{
+            display: none;
+        }
+    }
+
+    
+} 
+
+@media screen and (max-width:1300px){
+    .game-layout:deep() {
+        gap: 0;
+    }
+}
+

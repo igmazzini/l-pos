@@ -1,17 +1,31 @@
 <template>
   <div class="display-bet">
     <p>{{ betLabel }}</p>
-    <p>{{ bet }}</p>
+    <p @click="onBet" >{{ bet }}</p>
   </div>
 </template>
 
 <script>
-export default {
-  name: "DisplayBetComponent",
+
+export default { 
   props: {
-    bet: Number,
+    bet: String,
     betLabel: String,
   },
+  emits:['on-bet'],
+  setup(props,context){
+
+   
+
+    const onBet = () =>{
+      context.emit('on-bet');
+    }
+
+    return{
+      onBet,
+    
+    }
+  }
 };
 </script>
 
@@ -20,7 +34,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
 }
 .display-bet p {
   margin: 0;
@@ -30,11 +44,11 @@ export default {
   text-align: center;
 }
 .display-bet p:first-child {
-  font-size: 2rem;
+  font-size: 1.1rem;
   color: black;
 }
 .display-bet p:last-child {
-  font-size: 4rem;
+  font-size: 3.3rem;
   font-family: RobotoLight;
   color: var(--info-color);
 }

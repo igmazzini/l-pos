@@ -4,27 +4,25 @@
       <img src="../assets/img/end2end_logo.png" class="login-img" alt="Logo" />
 
       <form>
-        <label for="inputName" class="form-label">{{ lblUserName }}</label>
+        <label for="inputName" class="form-label">{{ t('loginName') }}</label>
         <input type="text" class="form-control login-input" id="inputName" required />
         <div class="invalid-feedback">
-          El nombre de usuario no puede estar vacio.
+          {{ t('loginName') }}{{ t('loginError') }}
         </div>
-        <label for="inputPassword" class="form-label mt-3">{{
-          lblPassword
-        }}</label>
+        <label for="inputPassword" class="form-label mt-3">{{ t('loginPassword') }}</label>
         <input
           type="password"
           class="form-control login-input"
           id="inputPassword"
           required
         />
-        <div class="invalid-feedback">La contraseña no puede estar vacia.</div>
+        <div class="invalid-feedback">{{ t('loginPassword') }}{{ t('loginError') }}</div>
       </form>
       <div class="login-buttons">
-        <span class="login-error">{{ loginError }}</span>
+        <span class="login-error">{{ t('invalidCredentials') }}</span>
       
         <button @click="test" class="btn btn-primary login-button">
-          {{ lblSubmit }}
+          {{ t('loginButton') }}
         </button>
       </div>
     </div>
@@ -34,22 +32,21 @@
 <script>
 import { useStore } from "vuex";
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 
 
 export default {
   name: "Login",
   setup() {
 
+    const { t } = useI18n();
     const store  = useStore();
     const router = useRouter();
     store.commit('setTitle','Inicio de sesión');
 
     return {
-      router,
-      lblUserName: "Nombre de usuario",
-      lblPassword: "Contraseña",
-      lblSubmit: "Ingresar",
-      loginError: "Credenciales invalidas",
+      t,
+      router,     
       test() {
         document.querySelector("form").classList.add("was-validated");
         router.push({name:'selector'})

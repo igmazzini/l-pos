@@ -5,8 +5,9 @@ import lotteryStore from '../modules/lottery/store'
 const store = createStore({
 
     state:{
-        version:1.3,
+        version:'V 1.3',
         title:'Loteria',
+        currency:'₡',
         mobile:false,
         isLoading:false
     },
@@ -31,6 +32,9 @@ const store = createStore({
         },
         mobile(state){
             return state.mobile
+        },
+        currency(state){
+            return state.currency
         }
     }
     

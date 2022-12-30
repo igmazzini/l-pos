@@ -2,33 +2,37 @@
   <div class="keyboard-buttons">
     <button
       v-for="(button, index) of buttons"
-      :key="button"
-      :class="getActive(index)"      
-      @click.stop="onSelect(index)"
+      :key="index"
+      :class="getClass(button.value)"  
+      :disabled="getDisabled(button.value)"    
+      @click.stop="onSelect(button.value)"
     >
-      <template v-if="String(button).toLowerCase() === 'imprimir'"> 
+      <template v-if="button.value === 'print'"> 
           <Printer class="keyboard-icon"/>
-          {{ button }}
+          {{ button.label }}
       </template>
-      <template v-else-if="String(button).toLowerCase() === 'aceptar'">
+      <template v-else-if="button.value  === 'insert' || button.value === 'confirm'">
           <KeyboardReturn class="keyboard-icon"/>
-          {{ button }}
+          {{ button.label }}
       </template>
       <template v-else>
-        {{ button }}
+        {{ button.label }}
       </template>
     </button>
   </div>
 </template>
 
 <script>
-import { ref } from "vue";
+
 import { useRipple } from "../../shared/composables/useRipple";
 import { Printer, KeyboardReturn} from 'mdue';
+import { useI18n } from 'vue-i18n';
 
 export default {
   props: {
     buttons: Array,
+    acceptDisabled:Boolean,
+    printDisabled:Boolean,
   },
   components:{
       Printer,
@@ -36,29 +40,44 @@ export default {
   },
   emits: ["keyboard-change"],
   setup(props, context) {
-    let currentIndex = ref(0);
+    const { t } = useI18n();   
     const { createRipple } = useRipple();
+   
 
     return {
-      currentIndex,
+      t,   
       createRipple,
-      onSelect: (index) => {
+      onSelect: (val) => {
         createRipple(event);
-        currentIndex.value = index;
-        context.emit("keyboard-change", currentIndex.value);
+       
+        context.emit("keyboard-change", val);
       },
-      getActive: (index) => {
+      getClass: (val) => {
         let outClass = "btn keyboard-button";
 
-        if (props.buttons[index].toLowerCase() === "imprimir") {
+        if (val === 'print') {
           outClass += " keyboard-button--imprimir";
         }
-        if (props.buttons[index].toLowerCase() === "aceptar") {
+        if (val === 'insert' || val === 'confirm') {
           outClass += " keyboard-button--aceptar";
         }
+        if (val === 'delete' || val === "<" ) {
+          outClass += " keyboard-button--secondary";
+        }
+        if(val === 'delete') {
+          outClass += " keyboard-button--delete";
+        }
+        
 
         return outClass;
       },
+      getDisabled(val){
+        if(val === 'print' && props.printDisabled){
+          return true;
+        }else{
+          return false;
+        }
+      }
     };
   },
 };
@@ -66,19 +85,19 @@ export default {
 
 <style lang="scss" scoped >
 .keyboard-buttons {
-  width: 50%;
-  height: 60%;
-  margin: 30px auto;
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(4, 1fr);
-  gap: 5px;
+  gap: 7px;
 }
 
 .keyboard-button {
   width: 100%;
   height: 100%;
-  border-radius: 7px;
+  border-radius: 5px;
   color: white;
   font-size: 2.7rem;
   font-family: RobotoBlack;
@@ -88,6 +107,10 @@ export default {
   background-color: var(--primary-color);
   position: relative;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 
 .keyboard-button:nth-child(4),
@@ -104,17 +127,29 @@ export default {
   background-color: var(--info-color);
   grid-column: 4;
   grid-row: 1/3;
+  width: 95%;
+  margin-left: 5%;
 }
 .keyboard-button--aceptar {
   background-color: var(--success-color);
   grid-column: 4;
   grid-row: 3/5;
+  width: 95%;
+  margin-left: 5%;
+}
+
+.keyboard-button--delete{}
+
+.keyboard-button--secondary{
+  background-color: var(--secondary-color);
 }
 
 .keyboard-icon{
     font-size: 5rem;
     color: white;
 }
+
+
 
 
 </style>

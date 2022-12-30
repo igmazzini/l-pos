@@ -5,7 +5,7 @@ export default{
         {
           path: '',
           name:'login-page',
-          component: ()=> import(/* webpackChunkName: "Login" */'@/modules/auth/views/Login')
+          component: ()=> import(/* webpackChunkName: "Login" */'@/modules/auth/views/LoginView')
         },
         
       ]

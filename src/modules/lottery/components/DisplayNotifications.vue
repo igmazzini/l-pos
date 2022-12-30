@@ -1,6 +1,6 @@
 <template>
   <div class="display-notifications">
-    <p class="title">{{ title }}</p>
+    <p v-if="!store.state.mobile" class="title">{{ title }}</p>
     <p :class="getClass()">
        <ExclamationThick class="alert-icon" v-if="type === 'info'"/>
        <Alert class="alert-icon" v-if="type === 'error'"/>
@@ -12,8 +12,8 @@
 <script>
  
 import { ExclamationThick, Alert } from 'mdue';
-export default {
-  name: "DisplayNotificationsComponent",
+import { useStore } from 'vuex';
+export default {  
   props: {
    title: String,
    notification: String,
@@ -25,7 +25,11 @@ export default {
     Alert 
   },
   setup(props){
+
+    const store = useStore();
+
     return{
+      store,
       getClass:() => {
 
         let outClass = 'notification';
@@ -58,13 +62,13 @@ export default {
   text-transform: uppercase;
   text-align: left;
   color: black;
-  font-size: 1.3rem;
+  font-size: 1.1rem;
 }
 .notification {
-  font-size: 2rem;
+  font-size: 1.8rem;
   color: black;
   padding: 30px;
-  border-radius: 15px;
+  border-radius: 7px;
   font-family: RobotoLight;
 }
 
@@ -81,8 +85,20 @@ export default {
 }
 
 .alert-icon{
-  font-size: 2.6rem;
+  font-size: 2rem;
 }
+
+
+@media screen and (max-width:1300px) {
+  .notification {
+    padding: 5px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    font-size: 1.3em;
+  }
+}
+
 
 
 
