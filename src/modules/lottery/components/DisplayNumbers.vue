@@ -1,6 +1,6 @@
 <template>
 <div class="display-numbers">
-    <div class="display-number" v-for="number of numbers" :key="number">
+    <div class="display-number" v-for="(number,index) of numbers" :key="index">
         {{number}}
     </div>
 </div>

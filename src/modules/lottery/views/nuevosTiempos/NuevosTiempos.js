@@ -72,8 +72,7 @@ export default defineComponent({
 
       
     const displayReventadosBet = ref(null); 
-    const deleteMobileMenu = ref(null);
-    const showDeleteMenu = ref(false);   
+    const deleteMobileMenu = ref(null);    
     const mobileDateMenu = ref(null);
     const showPrintModal = ref(false);   
     const bustedBetValue = ref('-');      
@@ -777,8 +776,7 @@ export default defineComponent({
      
        
        
-      bustedBetValue,
-      showDeleteMenu,
+      bustedBetValue,     
       mobileDateMenu,     
       bustedEnabled,
       deleteMobileMenu,

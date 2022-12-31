@@ -2,10 +2,9 @@
     <ul class="info-numbers">
         <li v-for="(data, index) of numbers" :key="data">
             <span class="index">{{ getIndex(index) }}</span>
-            <span v-for="num of data.numbers" :key="num" class="info-number">{{ num }}</span>
-            <span>{{ subString(data.type,(mobile) ? 3 : 20 ).toUpperCase() }}</span>
+            <div class="numbers-container"><span v-for="num of data.numbers" :key="num" class="info-number">{{ num }}</span></div>             
             <span>{{ data.date }}</span>           
-            <span>{{formatAmount(data.bet) }}</span>
+            <span><span class="special-label" v-if="data.type == 'revenge'">(RE)</span><span class="special-label" v-if="data.blindRooster != ''">({{data.blindRooster}})</span>{{ formatAmount(data.bet) }}</span>
             <Close @click="onDelete(index)" class="option-icon" />
         </li>
     </ul>
@@ -57,6 +56,7 @@ export default {
     height: 100%;
     max-height: 400px;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .info-numbers::-webkit-scrollbar {
@@ -80,26 +80,49 @@ export default {
 
 li{
     display: grid;   
-    grid-template-columns: 5% 10% 1fr 15% 20% 15% 5%;
+    grid-template-columns: 5% 1fr repeat(2,1fr) 5%;
     align-items: center;
     justify-items: start;
     margin: 5px 0;
     padding: 0;
 
+   
+
     span{
         margin: 0;
         padding: 0;
         display: flex;
+        align-items: center;
     }
 
     span:nth-child(3){
-        padding-left: 5px;
+        justify-self: center;
+    }
+    span:nth-child(4){
+        justify-self: end;
+        padding-right: 10px;
+    }   
+
+    .numbers-container{
+      display: flex;
+      span{
+        padding-left: 0;
+        padding-right: 0;
+      }
     }
 }
+
 
 .index {
     color: var(--primary-color);
     margin-right: 5px;
+}
+
+.special-label{
+   color: var(--primary-color);  
+   margin-right: 4px;
+   font-size: 0.8em;
+   
 }
 
 .info-number {
@@ -114,6 +137,7 @@ li{
     justify-content: center;
     color: black;    
     margin: 0 2px;
+    padding-top: 2px;
 }
 
 
@@ -135,12 +159,32 @@ li{
 
 
     li{   
-      grid-template-columns: 5% 10% 20% 20% 25% 15% 6%;
+      grid-template-columns: 3% 1fr 23% 1fr 5%;
+     
+
+       span:nth-child(4){
+        justify-self: end;
+        padding-right: 4px;
+       }   
+
+      .numbers-container{
+      
+        span{
+         font-size: 1em;
+        }
+      }
+    }
+    
+
+
+    .index {
+        
+        margin-right: 2px;
     }
 
     .info-number {
-        width: 28px;
-        height: 28px;
+        width: 20px;
+        height: 20px;
     }
   }
 </style>

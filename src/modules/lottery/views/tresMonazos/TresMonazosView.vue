@@ -1,16 +1,16 @@
 <script src="./TresMonazos.js"></script>
 <template>
  <Transition  >
-      <TicketModal @on-accept="onPrintAccept" @on-cancel="onPrintCancel" :game="game.name" :logo="require('@/modules/lottery/assets/img/'+game.img)" :numbers="raffles" v-if="showPrintModal">
-        <template v-slot:numbers-list>
-          <TicketModalNumbers :numbers="raffles"/>
-        </template>
-        <template v-slot:print-ticket-numbers>
-          <PrintTicketNumbers  :numbers="raffles"/>
-        </template>
+    <TicketModal @on-accept="onPrintAccept" @on-cancel="onPrintCancel" :game="game.name" :logo="require('@/modules/lottery/assets/img/'+game.img)" :numbers="raffles" v-if="showPrintModal">
+      <template v-slot:numbers-list>
+        <TicketModalNumbers :numbers="raffles"/>
+      </template>
+      <template v-slot:print-ticket-numbers>
+        <PrintTicketNumbers  :numbers="raffles"/>
+      </template>
 
-      </TicketModal>
-    </Transition>  
+    </TicketModal>
+  </Transition>  
    
   <div class="game-layout">
      <div class="game-layout-info">
@@ -31,7 +31,7 @@
           <TrashCanOutline/>
        </div>
       
-       <DeleteMobileMenu @on-delete="onMobileMenuClear"  @on-close="onMobileMenuClose" v-if="mobile && showDeleteMenu"/> 
+       <DeleteMobileMenu ref="deleteMobileMenu" @on-delete="onMobileMenuClear"  @on-close="onMobileMenuClose" v-if="mobile"/> 
       
      
     </div>

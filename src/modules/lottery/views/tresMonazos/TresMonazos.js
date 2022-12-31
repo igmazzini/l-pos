@@ -71,6 +71,7 @@ export default defineComponent( {
     const { createRipple } = useRipple(); 
 
     const mobileDateMenu = ref(null);
+    const deleteMobileMenu = ref(null);
     const defaultBetTypeIndex = ref(-1);
     const defaultBetIndex = ref(-1);
    
@@ -118,7 +119,7 @@ export default defineComponent( {
    
     
     
-    const showDeleteMenu = ref(false);   
+   
     const showPrintModal = ref(false); 
 
    
@@ -568,6 +569,7 @@ export default defineComponent( {
       emptyRaffles, 
 
       mobileDateMenu,
+      deleteMobileMenu,
       defaultBetTypeIndex,
       defaultBetIndex,
      
@@ -576,7 +578,7 @@ export default defineComponent( {
       keyBoardButtons,   
      
      
-      showDeleteMenu,     
+       
       showPrintModal,
       onPrintAccept,
       onPrintCancel,
@@ -589,13 +591,13 @@ export default defineComponent( {
       onDelete,
       onBlindRooster,
       onMobileDelete(){
-        showDeleteMenu.value = true;
+        deleteMobileMenu.value.showMenu();
       },
       onMobileMenuClose(){
-        showDeleteMenu.value = false;
+        deleteMobileMenu.value.hideMenu();
       },
       onMobileMenuClear(){
-        showDeleteMenu.value = false;
+        deleteMobileMenu.value.hideMenu();
       },
       onMobileDates(){
         mobileDateMenu.value.showMenu();

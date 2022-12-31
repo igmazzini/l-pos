@@ -15,19 +15,30 @@ export const checkEqualsDigits = (number)=>{
        return false;
     }
 }
-export const checkDuplicateBetNumber = (betNumber,betNumbers)=>{
+export const checkDuplicateBetNumber = (betNumber,betNumbers,multiplesNumbers = false)=>{
 
+    console.log(multiplesNumbers)
 
-
-    const checkNumbers = (checkNumbers, numbers)=>{
+    const checkNumbers = (checkNumbers, numbers,multiplesNumbers = false)=>{
+       
 
         let out = false;
 
-        checkNumbers.forEach(n => {
-            if(numbers.indexOf(n) > -1){
-                out = true;               
+        if(multiplesNumbers){         
+
+            if(JSON.stringify(checkNumbers) === JSON.stringify(numbers)){ 
+
+                out = true;
             }   
-        });
+        }else{
+            checkNumbers.forEach(n => {
+                if(numbers.indexOf(n) > -1){
+                    out = true;               
+                }   
+            });
+        }
+
+      
 
 
         return out;
@@ -41,7 +52,7 @@ export const checkDuplicateBetNumber = (betNumber,betNumbers)=>{
        if(betNumber.type == bet.type &&
           betNumber.date == bet.date &&                             
           betNumber.bet == bet.bet   &&
-          checkNumbers(betNumber.numbers, bet.numbers) ){
+          checkNumbers(betNumber.numbers, bet.numbers,multiplesNumbers) ){
 
             duplicate =  true;            
 
@@ -59,4 +70,27 @@ export const getRandomInRange = (min, max) => {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+export const getRandomIntExcludingExistingNumbers = (min, max, excludeArrayNumbers) => {
+
+    let randomNumber;
+
+    if(!Array.isArray(excludeArrayNumbers)) {
+      randomNumber = getRandomInRange(min, max);
+      return randomNumber;
+    }
+
+    do {
+      randomNumber =  getRandomInRange(min, max);
+    } while ((excludeArrayNumbers || []).includes(randomNumber));
+
+    return randomNumber;
   }
+
+export const hasDuplicates = (arry ) => {
+
+    const duplicates = arry.filter((item, index) => arry.indexOf(item) !== index);
+
+    return (duplicates.length > 0) ? true : false;
+};

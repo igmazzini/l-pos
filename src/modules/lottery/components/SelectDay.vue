@@ -1,6 +1,6 @@
 <template>
   <div class="time-buttons">     
-      <button   v-for="(time,index) of times" :key="index" :class="getTimeActive(index)" @click.stop="onSelectTime(index)">{{time}}</button>
+      <button   v-for="(day,index) of days" :key="index" :class="getTimeActive(index)" @click.stop="onSelectTime(day,index)">{{day.weekday}}</button>
   </div>
 </template>
 
@@ -8,24 +8,21 @@
 import { ref } from 'vue';
 
 export default {      
-    props:{
-        index: Number,       
-        times: Array,
+    props:{       
+        days: Array,
     },
-    emits: ['time-change'],
+    emits: ['day-change'],
     setup(props,context){
-        const data = {on:'',time:'',index:''};
+       
         const currentTimeIndex = ref(0);
-        const dateOn = ref(false);
+       
         return{
-            currentTimeIndex,
-            dateOn,
-            onSelectTime: (index) => {
-                currentTimeIndex.value = index;
-                data.on    =   dateOn.value;
-                data.time  =   currentTimeIndex.value;            
-                data.index =   props.index;            
-                context.emit('time-change',data);
+            currentTimeIndex,           
+            onSelectTime: (day,index) => {
+
+                currentTimeIndex.value = index;        
+                     
+                context.emit('day-change',day);
             },           
            
             getTimeActive: (index) => {

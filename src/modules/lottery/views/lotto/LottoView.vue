@@ -1,70 +1,88 @@
 <template>
+
+  <Transition  >
+    <TicketModal @on-accept="onPrintAccept" @on-cancel="onPrintCancel" :game="game.name" :logo="require('@/modules/lottery/assets/img/'+game.img)" :numbers="raffles" v-if="showPrintModal">
+      <template v-slot:numbers-list>
+        <TicketModalNumbers :numbers="raffles"/>
+      </template>
+      <template v-slot:print-ticket-numbers>
+        <PrintTicketNumbers  :numbers="raffles"/>
+      </template>
+
+    </TicketModal>
+  </Transition>  
    <div class="game-layout">
      <div class="game-layout-info">
-       <img v-if="!store.state.mobile" :src="require('@/modules/lottery/assets/img/'+game.img)" :alt="game.name" class="info-image">  
+       <img v-if="!mobile" :src="require('@/modules/lottery/assets/img/'+game.img)" :alt="game.name" class="info-image">  
        <div class="info-numbers-container">
-         <DisplayInfo @on-delete="onDelete" :numbers="infoNumbers"/>
+         <DisplayInfo @on-delete="onDelete" :numbers="raffles"/>
        </div>
-       <div v-if="!store.state.mobile"  class="divider"></div> 
-       <div v-if="!store.state.mobile"  class="game-layout-info--totals">
+       <div v-if="!mobile"  class="divider"></div> 
+       <div v-if="!mobile"  class="game-layout-info--totals">
          <p>{{t('ticketResumeLabel')}}</p>
          <p>{{t('ticketTotalAmountLabel')}}{{currency}}</p>
-         <p>{{totals}}</p>
+         <p>{{totalBet}}</p>
         
-          <button class="btn clear-button" @click="onBlindRooster">{{t('clearLabelButton')}}</button>
+          <button class="btn clear-button" @click="onClear">{{t('clearLabelButton')}}</button>
        </div> 
-       <div v-if="store.state.mobile" @click="onMobileDelete" class="game-layout-info--delete">
+       <div v-if="mobile" @click="onMobileDelete" class="game-layout-info--delete">
           <TrashCanOutline/>
        </div>
       
-       <DeleteMobileMenu @on-delete="onMobileMenuClear"  @on-close="onMobileMenuClose" v-if="store.state.mobile && showDeleteMenu"/> 
+       <DeleteMobileMenu @on-delete="onMobileMenuClear"  @on-close="onMobileMenuClose" v-if="mobile"/> 
       
      
     </div>
     <div class="game-layout-display">     
-      <DisplayNumbers :numbers="[22,36,26,27,14]"/>
-      <DisplayBet  :bet="600" :betLabel="t('betAmountLabel')+currency"/>     
-      <DisplayNotifications v-if="!store.state.mobile" :title="t('notificationsLabel')" :type="'info'" :notification="'Ingrese un Nº de hasta 2 dígitos y presione INGRESAR'"/>
+      <DisplayNumbers :numbers="raffleNumbers"/>
+      <DisplayBet  :bet="bet.toString()" :betLabel="t('betAmountLabel')+currency"/>     
+      <DisplayNotifications v-if="!mobile" :title="t('notificationsLabel')" :type="notificationType" :notification="notificationText"/>
       
 
      
     </div>
     <div class="game-layout-controls">
        
-       <DisplayNotifications v-if="store.state.mobile" :title="t('notificationsLabel')" :type="'info'" :notification="'Ingrese un Nº de hasta 2 dígitos y presione INGRESAR'"/> 
-       <SelectTime @date-change="onDateChange" @time-change="onTimeChange" :times="[t('day2'),t('day5')]" />
-       <SelectType   @type-change="onTypeChange" :title="''" :buttons="typeButtons"/>
+       <DisplayNotifications v-if="mobile" :title="t('notificationsLabel')" :type="notificationType" :notification="notificationText"/> 
+       <SelectDay  @day-change="onDateChange" :days="raffleDays" />       
+       <ToggleButton :label="t('revengeBetTypeLabel')" @on-change="onBetTypeChange"/>
        <button class="btn blind-rooster" @click="onBlindRooster">{{t('blindRooster')}}</button>           
       
                      
-       <KeyBoard @keyboard-change="onKeyBoardChange" :buttons="keyBoardButtons" :printDisabled="printDisabled"/>
+       <KeyBoard @keyboard-change="onKeyBoardChange" :buttons="keyBoardButtons" :printDisabled="emptyRaffles"/>
        
-       <div v-if="!store.state.mobile" class="control-footer">
+       <div v-if="!mobile" class="control-footer">
          <div class="control-footer-logo">
            <p>{{t('poweredBy')}}</p>
            <img  src="@/assets/img/logo_footer.svg" alt="logo-footer">
          </div>
          
-         <p>{{store.state.version}}</p>
+         <p>{{version}}</p>
        </div>
     </div>
   </div>
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRipple } from "../../../shared/composables/useRipple";
 import DisplayInfo            from '../../components/Lotto/DisplayInfo.vue'
 import DisplayNumbers         from '../../components/DisplayNumbers.vue';
 import DisplayBet             from '../../components/DisplayBet.vue';
 import DisplayNotifications   from '../../components/DisplayNotifications.vue';
-import SelectType             from '../../components/SelectType.vue';
-import SelectTime             from '../../components/SelectTime.vue';
+import ToggleButton           from '../../components/ToggleButton.vue';
+import SelectDay              from '../../components/SelectDay.vue';
 import KeyBoard               from '../../components/KeyBoard.vue';
 import DeleteMobileMenu       from '../../components/DeletMobileMenu.vue';
+import TicketModalNumbers     from '../../components/Lotto/TicketModalNumbers.vue';
+import PrintTicketNumbers     from '../../components/Lotto/PrintTicketNumbers .vue';
+import TicketModal            from '@/modules/shared/components/TicketModal/TicketModal.vue';
 import { TrashCanOutline } from 'mdue';
-import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
+import { useGame } from '@/modules/lottery/composables/useGame';
+import { useUI } from '@/modules/shared/composables/useUI';
+import { useTime } from '@/modules/shared/composables/useTime';
+import { checkDuplicateBetNumber, getRandomIntExcludingExistingNumbers, hasDuplicates } from '../../../shared/utils/utils.js';
 
 export default {
   name: "Lotto",
@@ -72,9 +90,12 @@ export default {
     DisplayInfo,
     DisplayNumbers,   
     DisplayBet,      
-    DisplayNotifications,   
-    SelectType,    
-    SelectTime, 
+    DisplayNotifications,         
+    SelectDay, 
+    ToggleButton,
+    TicketModal,
+    TicketModalNumbers,
+    PrintTicketNumbers,
     KeyBoard, 
     DeleteMobileMenu,
     TrashCanOutline,       
@@ -82,41 +103,68 @@ export default {
   },
    setup(){
 
+    const COMMON_BET_TYPE = 'common'; 
     const REVENGE_BET_TYPE = 'revenge'; 
 
-    const { t } = useI18n(); 
-    const store = useStore();
+    const FIRST_NUMBER_STATE        =   'FIRST_NUMBER_STATE';
+    const SECOND_NUMBER_STATE       =   'SECOND_NUMBER_STATE';
+    const THIRD_NUMBER_STATE        =   'THIRD_NUMBER_STATE';
+    const FOURTH_NUMBER_STATE       =   'FOURTH_NUMBER_STATE';
+    const FIFTH_NUMBER_STATE        =   'FIFTH_NUMBER_STATE';
+    const COMPLETED_NUMBERS_STATE   =   'COMPLETED_NUMBERS_STATE';
 
+    const ERROR_TYPE_NOTIFICATION = 'error';
+    const INFO_TYPE_NOTIFICATION = 'info';
+    
+    const MAX_BET = 4000;
+    const MIN_BET = 100;
+    const MAX_NUMBER_LENGHT = 2;
+    const MAX_RAFFLES = 8;
+    const DEFAULT_BET = 600;
+    const REVENGE_BET = 400;
+
+    const { t } = useI18n();
+    const { getDates } = useTime();    
+    const { mobile, version, currency } = useUI();
+    const { game, setGame, state, setState, bet, setBet, totalBet, validateBet, betType, setBetType, raffles, setRaffles, notificationText, notificationType, setNotification,
+    resetGame, deleteRaffle,emptyRaffles, times, setTimes, changeTime, morningTime, nightTime, setMorningTime, setNightTime } = useGame();
     const { createRipple } = useRipple();
-    const game = ref({name:'Lotto',img:'lottoLogo.png'});
+    const raffleDays = ref([]);
+    const raffleDay = ref('');
+
+
+    const mobileDateMenu = ref(null);
+    const deleteMobileMenu = ref(null);
+    const showPrintModal = ref(false);
+
+    const raffleNumbers = ref(['','','','','']);
+
+    let blindRooster = false;    
+
+    setGame({name:'Lotto',img:'lottoLogo.png'});    
+
+    setBet(DEFAULT_BET);
+    
+    setState(FIRST_NUMBER_STATE);
+
+    setBetType(COMMON_BET_TYPE);     
+
+    setTimes(['M','N']);
+
+    setMorningTime('12:00');
+
+    setNightTime('19:00');   
+
+   
+   
     const typeButtons = ref([{label:t('revengeBetTypeLabel'),value:REVENGE_BET_TYPE}]); 
     const keyBoardButtons = ref(['7','8','9',t('printLabelButton'),'4','5','6','1','2','3',t('enterLabelButton'),'<','0',t('deleteLabelButton')]);
-    const infoNumbers = ref([
-      {numbers:['12','14','36','21','23'],type:'',date:'24/11 N',bet:'$10000',},
-      {numbers:['12','14','36','21','23'],type:'',date:'24/11 N',bet:'$10000',},
-      {numbers:['12','14','36','21','23'],type:'',date:'24/11 N',bet:'$10000',},
-      {numbers:['12','14','36','21','23'],type:'',date:'24/11 N',bet:'$10000',},
-      {numbers:['12','14','36','21','23'],type:'',date:'24/11 N',bet:'$10000',},
-      {numbers:['12','14','36','21','23'],type:'',date:'24/11 N',bet:'$10000',},
-      {numbers:['12','14','36','21','23'],type:'',date:'24/11 N',bet:'$10000',},
-      {numbers:['12','14','36','21','23'],type:'',date:'24/11 N',bet:'$10000',},
-      {numbers:['12','14','36','21','23'],type:'',date:'24/11 N',bet:'$10000',},
-      
      
-      
-      
-      ]);
-    const days = ref([1,2,3,4,5,6,7,8,9]) 
    
-    const lblMorning = ref(' 12:00');
-    const lblNight = ref(' 19:00');
-    const currency =   ref('₡');
-    const printDisabled =   ref(true);
-    const totals =   ref(100);
-    const showDeleteMenu = ref(false);
-    const showDatesMenu = ref(false);       
 
-     if(store.state.mobile){
+    
+
+     if(mobile.value){
       keyBoardButtons.value = [
       {label:'7',value:'7'},
       {label:'8',value:'8'},
@@ -187,61 +235,622 @@ export default {
      }
 
 
+
+     /* UI FUNCTIONS  */
+
+     const onKeyBoardChange = (keyBoardValue) => {
+     
+     
+      if(keyBoardValue.toLowerCase() == 'print'){
+        
+        onPrint();
+        return;
+      }
+      if(keyBoardValue.toLowerCase() == 'insert'){
+        
+        onInsert();
+        return
+      }         
+     
+
+      setNumberValue(keyBoardValue);
+       
+    }
+
+
+    const onInsert = () =>{
+       
+        if(!validateBet(MAX_BET,MIN_BET)) return;       
+        if(!validateNumber()) return;
+
+        createRaffles();
+        
+    }
+
+    const onPrint = () =>{
+      
+        createRipple(event);        
+        showPrintModal.value = true;
+    }
+
+    const onPrintAccept = () =>{
+      showPrintModal.value = false;
+    }
+
+    const onPrintCancel = () =>{
+      showPrintModal.value = false;
+    }
+
+    const  onDateChange = (data) => {
+      
+     
+      raffleDay.value = data;
+     
+    }
+
+    const  onTimeChange = (data) => {
+     
+      changeTime(data);     
+    }
+
+    const onClear = () =>{
+
+      createRipple(event);      
+
+      resetGame()
+
+      setState(FIRST_NUMBER_STATE);
+
+      setInitialNotification();
+    }
+
+    const onBetTypeChange = (value) =>{    
+      
+      
+      console.log(value);
+
+      if(value){
+
+        setBetType(REVENGE_BET_TYPE);
+
+        setBet( DEFAULT_BET + REVENGE_BET );
+
+      }else{
+
+        setBetType( COMMON_BET_TYPE );
+        setBet( DEFAULT_BET )
+      }  
+
+     
+       
+    }
+
+
+    const onBlindRooster = () =>{
+
+       createRipple(event);
+
+       blindRooster = true;
+
+       let formatNumbers = ['','','','',''];
+
+       formatNumbers[0] =  getRandomIntExcludingExistingNumbers(0,40,formatNumbers);      
+       formatNumbers[1] =  getRandomIntExcludingExistingNumbers(0,40,formatNumbers);
+       formatNumbers[2] =  getRandomIntExcludingExistingNumbers(0,40,formatNumbers);
+       formatNumbers[3] =  getRandomIntExcludingExistingNumbers(0,40,formatNumbers);
+       formatNumbers[4] =  getRandomIntExcludingExistingNumbers(0,40,formatNumbers);
+
+       raffleNumbers.value = formatNumbers.map( number =>{
+       
+        if(String(number).length == 1){
+          number = '0'+number;
+        }
+         return number;
+       });
+
+      
+      
+       setState(COMPLETED_NUMBERS_STATE);
+       
+    }
+
+    /* NOTIFICATIONS */
+
+
+    const setInitialNotification = () => {
+
+       
+        setNotification(INFO_TYPE_NOTIFICATION,t('infoNumber5Notification'));
+    } 
+
+
+     /* VALIDATE FUNCTIONS */
+
+
+    const validateNumber = () => {
+
+        if(mobile.value){
+          console.log('Mobile validate')
+        }else{
+
+           if(state.value != COMPLETED_NUMBERS_STATE){
+              setNotification(ERROR_TYPE_NOTIFICATION,t('infoEmptyDate'));
+              return false;
+            }
+
+
+          if( hasDuplicates(raffleNumbers.value) ) {
+
+            setNotification(ERROR_TYPE_NOTIFICATION,t('errorNotificationRepeatNumbers'));
+
+            return false;
+
+          }
+        }
+             
+        
+        return true;
+    }
+
+    /* DATA FUNCTIONS */
+
+    const setRaffleDays = () =>{
+
+      raffleDays.value = ['',''];
+
+      getDates(t).forEach( (date) => {
+
+        if(date.weekday.toLowerCase() == t('day2').toLowerCase() && raffleDays.value[0] == ''){
+           raffleDays.value[0] = date;
+        }
+
+        if(date.weekday.toLowerCase() == t('day5').toLowerCase()  && raffleDays.value[1] == ''){
+          
+          raffleDays.value[1] = date;
+        }
+
+      });
+
+      raffleDay.value = raffleDays.value[0];
+     
+    }
+
+    /* {numbers:['12','14','36','21','23'],type:'',date:'24/11 N',bet:'$10000',} */
+    const createRaffles = () => {
+
+      
+     
+        let duplicate = false;    
+       
+
+        const raffle = {
+          numbers:raffleNumbers.value,
+          type:betType.value,
+          bet:bet.value,  
+          blindRooster: (blindRooster) ?   t('ticketTypeBlindRooster') : '',    
+          date: `${raffleDay.value.weekday} ${raffleDay.value.date}`
+        }
+
+        if(checkDuplicateBetNumber(raffle,raffles.value, true)){
+
+          duplicate = true;           
+         
+        }else{
+            
+         
+
+          if(raffles.value.length < MAX_RAFFLES){
+
+            setRaffles([...raffles.value,raffle]);
+
+          }else{
+
+            setNotification(ERROR_TYPE_NOTIFICATION,t('errorNotificationExcessNumbers'));
+          }
+
+          
+
+        }
+
+      if(duplicate){
+
+        setNotification(ERROR_TYPE_NOTIFICATION,t('errorNotificationDuplicateBet'));
+
+      }else{
+
+        raffleNumbers.value = ['','','','',''];
+
+        blindRooster = false;
+
+        setState(FIRST_NUMBER_STATE);
+
+        if(raffles.value.length < MAX_RAFFLES){
+
+            setInitialNotification();
+
+        }
+
+       
+
+      }
+
+     
+    }
+
+    const setNumberValue = (val) => {
+       switch (val.toLowerCase()) {
+        case 'delete':
+          
+          deleteNumbers();           
+
+          break;
+
+        case '<':               
+
+          deleteNumber();         
+
+          break;
+
+        default:
+           
+
+         setNumber(val);  
+        
+          
+          break;      
+       
+      }
+    }
+
+    const setNumber = ( val ) =>{
+     
+       if(mobile.value){
+        switch (state.value) {
+          case FIRST_NUMBER_STATE: 
+            
+            if(raffleNumbers.value[0].length < MAX_NUMBER_LENGHT){
+
+              raffleNumbers.value[0] += val;
+
+            }else{
+
+              setState(SECOND_NUMBER_STATE);
+
+            }  
+            
+            break;
+          case SECOND_NUMBER_STATE:
+
+            if(raffleNumbers.value[1].length < MAX_NUMBER_LENGHT){
+
+              raffleNumbers.value[1] += val;
+
+            }else{
+
+              setState(THIRD_NUMBER_STATE);
+              
+            }  
+            break;
+          case THIRD_NUMBER_STATE:
+
+
+            if(raffleNumbers.value[2].length < MAX_NUMBER_LENGHT){
+
+              raffleNumbers.value[2] += val;
+
+            }else{
+
+              setState(FOURTH_NUMBER_STATE);
+              
+            }
+
+            break;
+          case FOURTH_NUMBER_STATE:
+
+            if(raffleNumbers.value[3].length < MAX_NUMBER_LENGHT){
+
+              raffleNumbers.value[3] += val;
+
+            }else{
+
+              setState(FIFTH_NUMBER_STATE);
+              
+            }
+
+            break;
+          case FIFTH_NUMBER_STATE:
+
+            if(raffleNumbers.value[4].length < MAX_NUMBER_LENGHT){
+
+              raffleNumbers.value[4] += val;
+
+            }else{
+
+              setState(COMPLETED_NUMBERS_STATE);
+              
+            }
+
+            break;
+        
+          default:
+            break;
+        }
+      }else{
+
+        switch (state.value) {
+
+          case FIRST_NUMBER_STATE: 
+
+            raffleNumbers.value[0] = val;
+
+            setState(SECOND_NUMBER_STATE);
+
+            break;
+          case SECOND_NUMBER_STATE:
+
+            raffleNumbers.value[1] = val;
+
+            setState(THIRD_NUMBER_STATE);
+
+            break;
+          case THIRD_NUMBER_STATE:
+
+            raffleNumbers.value[2] = val;
+
+            setState(FOURTH_NUMBER_STATE);
+
+            break;
+          case FOURTH_NUMBER_STATE:
+
+            raffleNumbers.value[3] = val;
+
+            setState(FIFTH_NUMBER_STATE);
+
+            break;
+          case FIFTH_NUMBER_STATE:
+
+            raffleNumbers.value[4] = val;
+
+            setState(COMPLETED_NUMBERS_STATE);
+
+            break;
+        
+          default:
+            break;
+        }
+       
+      }            
+    }
+
+    const deleteNumber = () =>{
+     
+      if(mobile.value){
+        switch (state.value) {
+          case FIRST_NUMBER_STATE: 
+
+            raffleNumbers.value[0] = String(raffleNumbers.value[0]).slice(0, -1);
+
+            break;
+          case SECOND_NUMBER_STATE:
+
+            raffleNumbers.value[0] = String(raffleNumbers.value[0]).slice(0, -1);
+
+            if(raffleNumbers.value[0].length == 0){
+              setState(FIRST_NUMBER_STATE);
+            }
+
+            break;
+          case THIRD_NUMBER_STATE:
+
+            raffleNumbers.value[1] = String(raffleNumbers.value[1]).slice(0, -1);
+
+            if(raffleNumbers.value[1].length == 0){
+              setState(SECOND_NUMBER_STATE);
+            }
+
+            break;
+          case FOURTH_NUMBER_STATE:
+
+            raffleNumbers.value[2] = String(raffleNumbers.value[2]).slice(0, -1);
+
+            if(raffleNumbers.value[2].length == 0){
+              setState(THIRD_NUMBER_STATE);
+            }
+
+            break;
+          case FIFTH_NUMBER_STATE:
+
+            raffleNumbers.value[3] = String(raffleNumbers.value[3]).slice(0, -1);
+
+            if(raffleNumbers.value[3].length == 0){
+              setState(FOURTH_NUMBER_STATE);
+            }
+            
+            break;
+          case COMPLETED_NUMBERS_STATE:
+
+            raffleNumbers.value[4] = String(raffleNumbers.value[4]).slice(0, -1);
+
+            if(raffleNumbers.value[4].length == 0){
+              setState(FIFTH_NUMBER_STATE);
+            }
+            
+            break;
+        
+          default:
+            break;
+        }
+      }else{
+
+        switch (state.value) {
+
+          case FIRST_NUMBER_STATE:    
+
+            raffleNumbers.value[0] = '';
+           
+            break;
+          case SECOND_NUMBER_STATE:
+
+            raffleNumbers.value[0] = '';
+
+            setState(FIRST_NUMBER_STATE);
+           
+            break;
+          case THIRD_NUMBER_STATE:
+
+            raffleNumbers.value[1] = '';
+
+            setState(SECOND_NUMBER_STATE);
+            
+            break;
+          case FOURTH_NUMBER_STATE:
+
+            raffleNumbers.value[2] = '';
+
+            setState(THIRD_NUMBER_STATE);
+
+            break;
+          case FIFTH_NUMBER_STATE:
+
+            raffleNumbers.value[3] = '';
+
+            setState(FOURTH_NUMBER_STATE);
+
+            break;
+          case COMPLETED_NUMBERS_STATE:
+
+            raffleNumbers.value[4] = '';
+
+            setState(FIFTH_NUMBER_STATE);
+            
+            break;  
+        
+          default:
+            break;
+        }
+       
+      }
+    }
+
+    const deleteNumbers = () =>{
+
+      if(mobile.value){
+        switch (state.value) {
+            case FIRST_NUMBER_STATE:              
+              raffleNumbers.value[0] = '';
+              break;
+            case SECOND_NUMBER_STATE:
+              raffleNumbers.value[1] = '';
+              break;
+            case THIRD_NUMBER_STATE:
+              raffleNumbers.value[2] = '';
+              break;
+            case FOURTH_NUMBER_STATE:
+              raffleNumbers.value[3] = '';
+              break;
+            case FIFTH_NUMBER_STATE:
+              raffleNumbers.value[4] = '';
+              break;
+          
+            default:
+              break;
+          }
+      }else{
+
+        raffleNumbers.value = ['','','','',''];
+
+        setState(FIRST_NUMBER_STATE);
+        
+        setNotification(INFO_TYPE_NOTIFICATION,t('infoNumber5Notification'));
+      }
+        
+
+          
+    };
+
+
+    const onDelete = ( index )=>{
+      
+      deleteRaffle( index );
+
+      if(emptyRaffles.value){
+        setState(FIRST_NUMBER_STATE)
+      }
+
+    };
+
+
+    
+
+
+    onMounted( ()=>{         
+      
+      
+      setRaffleDays();
+
+
+      setInitialNotification();
+
+
+    });
+
+
+
     return{
-      t,
-      store,
-      game,
-      typeButtons,     
-      keyBoardButtons,
-      infoNumbers,
-      days,      
-      lblMorning,
-      lblNight,     
+      t,    
+      mobile,
       currency,
-      printDisabled,
-      totals,
-      showDeleteMenu,
-      showDatesMenu,
-      onTypeChange: (index)=>{
-        console.log('onTypeChange '+typeButtons.value[index])
-      },     
-      onDateChange: (data)=>{
-        console.log('onDateChange '+data.on+' '+data.index)       
-      },
-      onTimeChange: (data)=>{
-        console.log('onTimeChange '+data.time+' '+data.index)       
-      },
-      onKeyBoardChange: (index)=>{
-        console.log('onKeyBoardChange '+index)
-        console.log('onKeyBoardChange '+keyBoardButtons.value[index])
-      },
-      onDelete: (index)=>{
-        console.log('onDelete '+index)
-        infoNumbers.value.splice(index,1);
-      },
-      onBlindRooster(){
-        createRipple(event);
-      },
+      version,
+      game,
+      bet,
+      totalBet,
+      raffleNumbers,
+      raffles,
+      notificationType,
+      notificationText,     
+      times,    
+      raffleDays, 
+      morningTime,
+      nightTime, 
+      emptyRaffles, 
+      showPrintModal,
+      mobileDateMenu,
+      deleteMobileMenu,
+      typeButtons,     
+      keyBoardButtons, 
+
+
+
+      onKeyBoardChange,    
+      onBetTypeChange,     
+      onDateChange,
+      onTimeChange,     
+      onDelete,
+      onBlindRooster,
+      onClear,
+      onPrintCancel,
+      onPrintAccept,
+
       onMobileDelete(){
-        showDeleteMenu.value = true;
+        deleteMobileMenu.value.showMenu();
       },
       onMobileMenuClose(){
-        showDeleteMenu.value = false;
+        deleteMobileMenu.value.hideMenu();
       },
       onMobileMenuClear(){
-        showDeleteMenu.value = false;
+        deleteMobileMenu.value.hideMenu();
       },
       onMobileDates(){
-        showDatesMenu.value = true;
+        mobileDateMenu.value.showMenu();
       },
       onMobileDatesClose(){
-        showDatesMenu.value = false;
+        mobileDateMenu.value.hideMenu();
       },
       onMobileDatesCancel(){
-        showDatesMenu.value = false;
+        mobileDateMenu.value.hideMenu();
       },
       onMobileDatesAccept(){
-        showDatesMenu.value = false;
+        mobileDateMenu.value.hideMenu();
       }
     }
   }
