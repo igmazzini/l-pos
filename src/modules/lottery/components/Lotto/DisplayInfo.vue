@@ -159,8 +159,8 @@ li{
 
 
     li{   
-      grid-template-columns: 3% 1fr 23% 1fr 5%;
-     
+
+      grid-template-columns: 3% 1fr 23% 1fr 5%;     
 
        span:nth-child(4){
         justify-self: end;
