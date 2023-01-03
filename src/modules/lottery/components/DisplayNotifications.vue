@@ -51,6 +51,9 @@ export default {
 
           outClass += ' notification--error';
         }
+        
+
+       
 
         return outClass;
       }
@@ -106,6 +109,12 @@ export default {
   
 }
 
+.esp_font{
+      p{
+        font-size: 1.2em !important;
+      }
+    }
+
 .alert-icon{ 
   margin-right: 10px;
   position: absolute;
@@ -126,6 +135,8 @@ export default {
     p{
      font-size: 1.4em;
     }
+
+    
   }
 }
 

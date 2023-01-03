@@ -429,7 +429,13 @@
                       flex-direction: row;
                       .keyboard-icon{
                         margin-right: 15px;
-                                           }
+                        width: 43px;
+                        height: 43px;                       
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        
+                      }
                      
                 }
                 
@@ -443,6 +449,12 @@
 
                     .keyboard-icon{
                         margin-right: 15px;
+                        width: 43px;
+                        height: 43px;                       
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        
                         
                     }
                     
