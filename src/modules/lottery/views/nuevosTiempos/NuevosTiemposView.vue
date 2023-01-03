@@ -78,7 +78,7 @@
                      
        <KeyBoard @keyboard-change="onKeyBoardChange" :buttons="keyBoardButtons" :printDisabled="emptyRaffles"/>
        <keep-alive>
-       <DatesMobileMenu ref="mobileDateMenu" @on-accept="onMobileDatesAccept" @on-cancel="onMobileDatesCancel"  @on-close="onMobileDatesClose" v-if="mobile" :morningTime="morningTime" :nightTime="nightTime" :dates="dates" :times="times" @on-mobile-date-change="onDateChange" @on-mobile-time-change="onTimeChange"  />
+       <DatesMobileMenu ref="mobileDateMenu" @on-accept="onMobileDatesAccept" @on-cancel="onMobileDatesCancel"  @on-close="onMobileDatesClose" v-if="mobile" :defaultDate="defaultDateIndex" :morningTime="morningTime" :nightTime="nightTime" :dates="dates" :times="times" @on-mobile-date-change="onDateChange" @on-mobile-time-change="onTimeChange"  />
        </keep-alive>
        <div v-if="!mobile" class="control-footer">
          <div class="control-footer-logo">

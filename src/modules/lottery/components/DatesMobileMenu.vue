@@ -4,7 +4,7 @@
         <div @click="onBackClick" :class="['dates-menu--background']"></div>
         <div :class="['dates-menu--action']">            
             <div class="action--dates">
-                 <SelectDate v-for="(date,index) of dates" :key="index" @date-change="onDateChange" @time-change="onTimeChange" :morningTime="morningTime" :nightTime="nightTime" :times="times" :today="(index == 0) ? true : false" :date="date.date" :weekDay="date.weekday" :index="index"/>
+                 <SelectDate v-for="(date,index) of dates" :key="index" @date-change="onDateChange" @time-change="onTimeChange" :morningTime="morningTime" :nightTime="nightTime" :times="times" :default="defaultDate" :today="(index == 0) ? true : false" :date="date.date" :weekDay="date.weekday" :index="index"/>
             </div>
             <div class="action--times">
                 <p>{{t('raffleMorningLabel')}} {{morningTime}}</p>  
@@ -33,7 +33,8 @@ export default {
         'times',
         'morningTime',
         'nightTime',
-        'show'
+        'show',
+        'defaultDate'
     ],
     emits: ["on-accept","on-cancel", "on-close","on-mobile-date-change","on-mobile-time-change"],
     setup(props,context){
