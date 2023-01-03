@@ -13,7 +13,7 @@ export const useAuth = () => {
 
         let authorized = false;
 
-        if(user == 'demo' && pass == 'demoe2e'){
+        if(user == 'demo' && pass == 'demoE2E'){
             authorized = true;
         }        
 
