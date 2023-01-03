@@ -6,6 +6,8 @@
       "loginPassword": "Password",
       "loginButton": "Login",
       "loginError": "cannot be empty",
+      "loginTitle": "Login",
+      "lotteryTitle": "Lottery",
       "invalidCredentials": "Invalid credentials",
       "betAmountLabel": "Bet amount ",
       "reventadoBetAmountLabel": "Extra bet",
@@ -41,6 +43,7 @@
       "acceptLabelButton": "Accept",
       "cancelLabelButton": "Cancel",
       "modalPrinting": "Printing",
+      "nextLabelButton": "Next",
       "ticketGame": "Game",
       "ticketNumber": "Number",
       "ticketNumbers": "Numbers",
@@ -97,7 +100,8 @@
       "errorNotificationBetZero": "The bet value cannot be 0",
       "errorNotificationRepeatNumbers": "Numbers cannot be repeated",
       "errorReventadoBetZero": "Betting value for BUSTED cannot be 0",
-      "errorReventadoAmountBiggerBet": "The amount of BUSTED cannot be greater than the stake value"
+      "errorReventadoAmountBiggerBet": "The amount of BUSTED cannot be greater than the stake value",
+      "errorMaxNumber": "The numbers cannot be greater than "
 
     },
     "ESP_AR": {
@@ -107,6 +111,8 @@
         "loginPassword": "Contraseña",
         "loginButton": "Ingresar",
         "loginError": "no puede estar vacio",
+        "loginTitle": "Inicio de sesión",
+        "lotteryTitle": "Loteria",
         "invalidCredentials": "Credenciales invalidas",
         "betAmountLabel": "Valor de apuesta en ",
         "reventadoBetAmountLabel": "Apuesta reventados",
@@ -133,6 +139,7 @@
         "enterLabelButton": "Ingresar",
         "confirmLabelButton": "Confirmar",
         "deleteLabelButton": "Borrar",
+        "nextLabelButton": "Siguiente",
         "clearLabelButton": "Limpiar",
         "printModalTitle": "¿Desea imprimir el ticket?",
         "ticketResumeLabel": "Resumen:",
@@ -198,7 +205,8 @@
         "errorNotificationEqualsNumbers": "Los dígitos del Nº no pueden ser iguales",
         "errorNotificationBetZero": "El valor de apuesta no puede ser 0",
         "errorReventadoBetZero": "El valor de apuesta para REVENTADOS no puede ser 0",
-        "errorReventadoAmountBiggerBet": "El monto de REVENTADOS no puede ser mayor al valor de apuesta"
+        "errorReventadoAmountBiggerBet": "El monto de REVENTADOS no puede ser mayor al valor de apuesta",
+        "errorMaxNumber": "Los números no pueden ser mayores a "
         
     }
 }

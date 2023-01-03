@@ -1,7 +1,8 @@
-import { createRouter, createWebHashHistory } from "vue-router"
-import NotFoundPage from '../modules/shared/views/NotFoundPage'
-import authRouter from '../modules/auth/router'
-import lotteryRouter from '../modules/lottery/router'
+import { createRouter, createWebHashHistory } from "vue-router";
+import NotFoundPage from '@/modules/shared/views/NotFoundPage';
+import authRouter from '@/modules/auth/router';
+import lotteryRouter from '@/modules/lottery/router';
+import  isAuthenticatedGuard  from '@/modules/auth/router/auth-guard'
 
 const routes = [
     { 
@@ -15,7 +16,8 @@ const routes = [
     },
     { 
       path: '/lottery',
-      ...lotteryRouter     
+      beforeEnter:[isAuthenticatedGuard], 
+      ...lotteryRouter,     
       
     },
     { 

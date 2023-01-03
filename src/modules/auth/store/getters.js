@@ -1,7 +1,7 @@
 
-// export const myGetter = ( state ) => {
-//  return state
-// }
+export const isAuthenticated = ( state ) => {
+ return state.isAuthenticated
+ }
 
 
 

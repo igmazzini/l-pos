@@ -1,29 +1,38 @@
 <template>
   <div class="games">
     <div class="game" v-for="game of games" :key="game" @click.prevent="onGameSelected(game)" >     
-      <img :src="require('@/modules/lottery/assets/img/'+game.img)" :class="getImageClass(game)" :alt="game.name">      
+      <img :src="require('@/modules/lottery/assets/img/'+game.img)" :class="[getImageClass(game),'animate__animated animate__zoomIn animate__faster']" :alt="game.name">      
     </div>
   </div>
 </template>
 
 <script>
-import { useStore } from "vuex";
-import { computed } from "vue";
+
+import { useLottery } from '@/modules/lottery/composables/useLottery';
+import { useUI } from '@/modules/shared/composables/useUI';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 
 export default {
   name: "Selector",
   setup() {
-    const store  = useStore();
+    
+    const { t } = useI18n();
+    const { setTitle } = useUI(); 
+    const { games }  = useLottery();
     const router = useRouter();
-    const games  = computed(() => store.getters["lotteryStore/games"]);
+    
+   
 
-    store.commit('setTitle','Loteria');
+  
+    setTitle(t('lotteryTitle'));
    
     return {
       games,     
       onGameSelected: (game) => {  
-        store.commit('setTitle',game.name);         
+            
+        setTitle(game.name);  
+
         router.push({name:game.route});
       },
       getImageClass: (game) => {
@@ -66,20 +75,13 @@ export default {
 .game img{
   width: 80%;
   max-width: 380px; 
-  transform: scale(1);
-  animation: fadeIn 300ms;
-  animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+ 
 }
 
 .small-img{
   max-width: 310px !important;
 }
 
-@keyframes fadeIn {
-  0%{
-    transform: scale(0);
-  }
-}
 
 @media screen and (max-width:540px) {
   .small-img{

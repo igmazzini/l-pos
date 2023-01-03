@@ -14,8 +14,7 @@ import DatesMobileMenu        from '../../components/DatesMobileMenu.vue';
 import TicketModal            from '@/modules/shared/components/TicketModal/TicketModal.vue';
 import TicketModalNumbers     from '../../components/NuevosTiempos/TicketModalNumbers.vue';
 import PrintTicketNumbers     from '../../components/NuevosTiempos/PrintTicketNumbers .vue';
-import { TrashCanOutline } from 'mdue';
-import { CalendarArrowLeft  } from 'mdue';
+
 import { useI18n } from 'vue-i18n';
 import {checkEqualsDigits, checkDuplicateBetNumber , getRandomInRange} from '../../../shared/utils/utils.js';
 import { useTime } from '@/modules/shared/composables/useTime';
@@ -35,9 +34,7 @@ export default defineComponent({
     SelectBet, 
     SelectDate, 
     KeyBoard, 
-    DeleteMobileMenu,
-    TrashCanOutline,
-    CalendarArrowLeft,
+    DeleteMobileMenu,      
     DatesMobileMenu,
     TicketModal,
     TicketModalNumbers,
@@ -65,7 +62,7 @@ export default defineComponent({
 
     const { t } = useI18n();
     const { getDates } = useTime();    
-    const { mobile, version, currency } = useUI();
+    const { mobile, version, currency, lang } = useUI();
     const { game, setGame, state, setState, bet, setBet, totalBet, validateBet, betType, setBetType, setNumber, raffleNumber, raffles, setRaffles, notificationText, notificationType, setNotification,
     resetGame, deleteRaffle,emptyRaffles, dates, setDates,changeDate,selectedDates, setSelectedDates, times, setTimes, changeTime, morningTime, nightTime, setMorningTime, setNightTime } = useGame();
     const { createRipple } = useRipple(); 
@@ -129,7 +126,20 @@ export default defineComponent({
     if(mobile.value){
       betButtons.value = ['100','...'];
     }   
-     
+
+    
+   
+    
+    watch(lang, ()=>{
+      
+      setDates(getDates(t));  
+
+      setButtonsLabels();
+
+      setInitialNotification();
+      
+
+    });
     
 
     watch(state,()=>{
@@ -158,6 +168,43 @@ export default defineComponent({
 
 
     /* UI FUNCTIONS */
+
+
+    const setButtonsLabels = () =>{
+
+     keyBoardButtons.value  = [
+        {label:'7',value:'7'},
+        {label:'8',value:'8'},
+        {label:'9',value:'9'},
+        {label:t('printLabelButton'),value:'print'},
+        {label:'4',value:'4'},
+        {label:'5',value:'5'},
+        {label:'6',value:'6'},
+        {label:'1',value:'1'},
+        {label:'2',value:'2'},
+        {label:'3',value:'3'},
+        {label:t('enterLabelButton'),value:'insert'},
+        {label:'<',value:'<'},
+        {label:'0',value:'0'},
+        {label:t('deleteLabelButton'),value:'delete'},
+        ];  
+
+
+       typeButtons.value = [
+          {label:t('exactBetTypeLabel'),value:EXACT_BET_TYPE},
+          {label:t('reversibleBetTypeLabel'),value:REVERSIBLE_BET_TYPE},
+          {label:t('firstBetTypeLabel'),value:FIRST_BET_TYPE},
+          {label:t('terminationBetTypeLabel'),value:TERMINATION_BET_TYPE}
+          ];
+        
+        if(mobile.value){
+          betButtons.value = ['100','...'];
+        }else{
+          betButtons.value = ['100','200','300','400','500','1000','2000','...']; 
+        }
+
+          
+    }
     
 
     const onKeyBoardChange = (keyBoardValue) => {

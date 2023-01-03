@@ -14,8 +14,7 @@ import DatesMobileMenu        from '../../components/DatesMobileMenu.vue';
 import TicketModalNumbers     from '../../components/TresMonazos/TicketModalNumbers.vue';
 import PrintTicketNumbers     from '../../components/TresMonazos/PrintTicketNumbers .vue';
 import TicketModal            from '@/modules/shared/components/TicketModal/TicketModal.vue';
-import { TrashCanOutline } from 'mdue';
-import { CalendarArrowLeft  } from 'mdue';
+
 import { useI18n } from 'vue-i18n';
 import { useUI } from '@/modules/shared/composables/useUI';
 import { useTime } from '@/modules/shared/composables/useTime';
@@ -34,9 +33,7 @@ export default defineComponent( {
     SelectBet, 
     SelectDate, 
     KeyBoard, 
-    DeleteMobileMenu,
-    TrashCanOutline,
-    CalendarArrowLeft,
+    DeleteMobileMenu,   
     DatesMobileMenu,
     TicketModal,
     TicketModalNumbers,

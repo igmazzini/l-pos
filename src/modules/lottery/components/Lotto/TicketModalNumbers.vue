@@ -132,7 +132,7 @@ li{
    
 
     .ticket-modal-content-numbers {
-        padding: 5px;
+        padding: 3px;
         font-size: 1.2em;
     }  
 

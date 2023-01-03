@@ -6,111 +6,128 @@ import html2canvas from "html2canvas";
 
 export const useUI = () => {
 
-    const store = useStore();
-    const { t } = useI18n(); 
-
-   const subString = (text, characters = 15) =>{
-      return String(text).substring(0,characters);
-   }
-
-    const getIndex = (index) => {
-        const alphabet = [
-          "A",
-          "B",
-          "C",
-          "D",
-          "E",
-          "F",
-          "G",
-          "H",
-          "I",
-          "J",
-          "K",
-          "L",
-          "M",
-          "N",
-          "O",
-          "P",
-          "Q",
-          "R",
-          "S",
-          "T",
-          "U",
-          "V",
-          "W",
-          "X",
-          "Y",
-          "Z",
-        ];
-        return alphabet[index];
-      }
-
-      const formatAmount = (amount) =>{
-        return `${store.state.currency} ${amount}`;
-      }
-
-      const getPrintDate = () =>{
-        const now = new Date();
-        const dd = String(now.getDate()).padStart(2, '0');       
-        const month = now.getMonth();
-        const yyyy = now.getFullYear();
-        const hour = now.getHours();
-        const minute = now.getMinutes();
-
-        return `${t(`day${now.getDay()}`)} ${dd} ${t(`month${month}`)} ${yyyy} ${hour}:${minute}`;
-      }
+  const store = useStore();
+  const { t,locale } = useI18n();
 
 
-      const printTicket = (ticket,ticketImage, gameName,  numbersAmount, maxNumbers) =>{
+  const setTitle = ( title ) =>{
+    store.commit('setTitle',title);
+  }
 
-       
-        const minDocHeight = 80;
-        const maxDocHeight = 110;
-        let docWidth = 55; 
-        let docHeight = maxDocHeight; 
+  const setLanguage = ( lang ) =>{
 
-       
+      store.commit('setLanguage',lang);
 
-        if(numbersAmount < maxNumbers){
-          docHeight = minDocHeight + (numbersAmount  * 3);
-        }
+      locale.value = lang;
+  }
 
-        let doc = new jsPDF('p', 'mm', [docHeight, docWidth]); //310mm high 55mm wide        
-        let scaleCanvas = null;    
-         
+  const subString = (text, characters = 15) => {
+    return String(text).substring(0, characters);
+  }
 
-        if(!store.state.mobile){
-          scaleCanvas = 1.5;
-        }     
+  const getIndex = (index) => {
+    const alphabet = [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J",
+      "K",
+      "L",
+      "M",
+      "N",
+      "O",
+      "P",
+      "Q",
+      "R",
+      "S",
+      "T",
+      "U",
+      "V",
+      "W",
+      "X",
+      "Y",
+      "Z",
+    ];
+    return alphabet[index];
+  }
 
-        html2canvas(ticket,{scale:scaleCanvas, width: ticket.offsetWidth,
-        height: ticket.offsetHeight}).then(function(canvas) {
+  const formatAmount = (amount) => {
+    return `${store.state.currency} ${amount}`;
+  }
 
-            const imgData = canvas.toDataURL('image/png');      
-            
-            const fileName = `${gameName}-${getPrintDate().replaceAll(' ','-')}.pdf`;        
+  const getPrintDate = () => {
+    const now = new Date();
+    const dd = String(now.getDate()).padStart(2, '0');
+    const month = now.getMonth();
+    const yyyy = now.getFullYear();
+    const hour = now.getHours();
+    const minute = now.getMinutes();
 
-            doc.addImage(imgData, 'PNG', 0, 0,doc.internal.pageSize.getWidth(),doc.internal.pageSize.getHeight());
+    return `${t(`day${now.getDay()}`)} ${dd} ${t(`month${month}`)} ${yyyy} ${hour}:${minute}`;
+  }
 
-            doc.save(fileName);          
-          
-        }
-        
-        )
-        .catch( (error) => {
-          console.log('Print error');
-          console.log(error);
-        } );
-      }
 
-      return{
-        currency: computed( () => store.state.currency),
-        mobile: computed( () => store.state.mobile),
-        version: computed( () => store.state.version),
-        getIndex,
-        subString,
-        formatAmount,
-        getPrintDate,
-        printTicket
-      }
+  const printTicket = (ticket, ticketImage, gameName, numbersAmount, maxNumbers) => {
+
+
+    const minDocHeight = 80;
+    const maxDocHeight = 110;
+    let docWidth = 55;
+    let docHeight = maxDocHeight;
+
+
+
+    if (numbersAmount < maxNumbers) {
+      docHeight = minDocHeight + (numbersAmount * 3);
+    }
+
+    let doc = new jsPDF('p', 'mm', [docHeight, docWidth]); //310mm high 55mm wide        
+    let scaleCanvas = null;
+
+
+    if (!store.state.mobile) {
+      scaleCanvas = 1.5;
+    }
+
+    html2canvas(ticket, {
+      scale: scaleCanvas, width: ticket.offsetWidth,
+      height: ticket.offsetHeight
+    }).then(function (canvas) {
+
+      const imgData = canvas.toDataURL('image/png');
+
+      const fileName = `${gameName}-${getPrintDate().replaceAll(' ', '-')}.pdf`;
+
+      doc.addImage(imgData, 'PNG', 0, 0, doc.internal.pageSize.getWidth(), doc.internal.pageSize.getHeight());
+
+      doc.save(fileName);
+
+    }
+
+    )
+      .catch((error) => {
+        console.log('Print error');
+        console.log(error);
+      });
+  }
+
+  return {
+    currency: computed(() => store.state.currency),
+    mobile: computed(() => store.state.mobile),
+    version: computed(() => store.state.version),
+    lang: computed(() => store.getters['language']),
+    setTitle,
+    getIndex,
+    subString,
+    formatAmount,
+    getPrintDate,
+    printTicket,
+    setLanguage
+  }
 };

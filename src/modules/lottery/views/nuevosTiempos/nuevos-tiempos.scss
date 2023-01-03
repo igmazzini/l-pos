@@ -145,6 +145,13 @@
         @media screen and (max-width:1300px){
             .display-numbers{    
                 grid-column: 1/5; 
+
+                .display-number{
+                   img{
+                    width: 80%;
+                    margin-left: 5px;
+                   }
+                }
             }
 
             .display-bet{

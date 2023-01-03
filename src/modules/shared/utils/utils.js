@@ -15,9 +15,9 @@ export const checkEqualsDigits = (number)=>{
        return false;
     }
 }
-export const checkDuplicateBetNumber = (betNumber,betNumbers,multiplesNumbers = false)=>{
 
-    console.log(multiplesNumbers)
+export const checkDuplicateBetNumber = (betNumber,betNumbers,multiplesNumbers = false)=>{
+    
 
     const checkNumbers = (checkNumbers, numbers,multiplesNumbers = false)=>{
        

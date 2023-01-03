@@ -9,7 +9,8 @@ const store = createStore({
         title:'Loteria',
         currency:'₡',
         mobile:false,
-        isLoading:false
+        isLoading:false,
+        language:'ENG_US',
     },
     mutations:{
         setLoading(state,loading){
@@ -20,6 +21,9 @@ const store = createStore({
         },
         setMobile(state,mobile){
             state.mobile = mobile;
+        },
+        setLanguage(state,language){
+            state.language = language;
         }
     },
     modules:{
@@ -35,6 +39,9 @@ const store = createStore({
         },
         currency(state){
             return state.currency
+        },
+        language(state){
+            return state.language
         }
     }
     

@@ -1,4 +1,4 @@
 
-// export const myAction = ( state ) => {
-
-// }
+export const setIsAuthenticated = ( state, val ) => {
+    state.isAuthenticated = val;
+}
