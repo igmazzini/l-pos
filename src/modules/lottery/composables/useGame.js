@@ -1,5 +1,6 @@
 import { computed, ref } from "vue";
 import { useI18n } from 'vue-i18n';
+import { useTime } from '@/modules/shared/composables/useTime';
 
 export const useGame = ()=>{
 
@@ -7,6 +8,7 @@ export const useGame = ()=>{
     const INFO_TYPE_NOTIFICATION = 'info';
 
     const { t } = useI18n();
+    const { checkLimitTime } = useTime();  
 
     const currentGame = ref({});
     const currentNumber = ref('');
@@ -244,6 +246,46 @@ export const useGame = ()=>{
         
     };
 
+
+    const setDefaultDate = () =>{
+
+
+      let defaultDateIndex = 0;
+           
+      const dateChecked = checkLimitTime(gameMorningTime.value, gameNightTime.value);
+
+      let date = null;
+     
+      if(dateChecked.enableDate){
+
+        date = dates.value[0];
+        defaultDateIndex = 0;
+
+        if(dateChecked.enableTime == 'M'){
+
+          date.time = times.value[0];
+          
+        }else{
+  
+          date.time = times.value[1];
+        }
+       
+
+      }else{
+
+        date = dates.value[1];
+        date.time = times.value[0];
+        defaultDateIndex = 1;
+      
+
+      }          
+
+      setSelectedDates([date]);
+
+
+      return defaultDateIndex;
+    }
+
    
 
     return{
@@ -278,7 +320,8 @@ export const useGame = ()=>{
         setNotification,
         resetGame,
         changeDate,
-        changeTime
+        changeTime,
+        setDefaultDate
 
     }
 };

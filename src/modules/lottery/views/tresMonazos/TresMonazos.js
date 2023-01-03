@@ -64,13 +64,14 @@ export default defineComponent( {
     const { getDates } = useTime();    
     const { mobile, version, currency } = useUI();
     const { game, setGame, state, setState, bet, setBet, totalBet, validateBet, betType, setBetType, setNumber, raffleNumber, raffles, setRaffles, notificationText, notificationType, setNotification,
-    resetGame, deleteRaffle,emptyRaffles, dates, setDates,changeDate,selectedDates, setSelectedDates, times, setTimes, changeTime, morningTime, nightTime, setMorningTime, setNightTime } = useGame();
+    resetGame, deleteRaffle,emptyRaffles, dates, setDates,changeDate,selectedDates, setDefaultDate , times, setTimes, changeTime, morningTime, nightTime, setMorningTime, setNightTime } = useGame();
     const { createRipple } = useRipple(); 
 
     const mobileDateMenu = ref(null);
     const deleteMobileMenu = ref(null);
     const defaultBetTypeIndex = ref(-1);
     const defaultBetIndex = ref(-1);
+    const defaultDateIndex = ref(0);
    
     setGame({name:'TresMonazos',img:'tresMonazosLogo.png'});    
 
@@ -87,6 +88,8 @@ export default defineComponent( {
     setMorningTime('12:00');
 
     setNightTime('19:00');
+
+    defaultDateIndex.value =  setDefaultDate();
 
 
     
@@ -528,19 +531,15 @@ export default defineComponent( {
       deleteRaffle( index );
 
     };
+
    
 
     onMounted( ()=>{
 
 
       defaultBetTypeIndex.value = 0;
-      defaultBetIndex.value = 0;
-     
-
-      let date = dates.value[0];
-      date.time = times.value[0];
-      setSelectedDates([date]);
-
+      defaultBetIndex.value = 0;     
+    
 
       setInitialNotification();
 
@@ -569,6 +568,7 @@ export default defineComponent( {
       deleteMobileMenu,
       defaultBetTypeIndex,
       defaultBetIndex,
+      defaultDateIndex,
      
       typeButtons,
       betButtons,

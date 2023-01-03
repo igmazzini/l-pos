@@ -57,17 +57,17 @@
 
        <div v-if="mobile" @click="onMobileDates" class="game-layout-controls-dates--button">
           <span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-calendar-plus" viewBox="0 0 16 16">
-              <path d="M8 7a.5.5 0 0 1 .5.5V9H10a.5.5 0 0 1 0 1H8.5v1.5a.5.5 0 0 1-1 0V10H6a.5.5 0 0 1 0-1h1.5V7.5A.5.5 0 0 1 8 7z"/>
+             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-calendar-check" viewBox="0 0 16 16">
+              <path d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
               <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
-            </svg>
+            </svg> 
           </span>  
        </div>
        
        <div v-if="!mobile" class="control-dates">
          <p class="cotrol-date-title">{{t('rafflesLabel')}}</p>
          <div class="control-select-dates">
-           <SelectDate v-for="(date,index) of dates" :key="index" @date-change="onDateChange" @time-change="onTimeChange" :today="(index == 0) ? true : false" :times="['M','N']" :date="date.date" :index="index"/>
+           <SelectDate v-for="(date,index) of dates" :key="index" @date-change="onDateChange" @time-change="onTimeChange" :morningTime="morningTime" :nightTime="nightTime" :today="(index == 0) ? true : false"  :default="defaultDateIndex" :times="times" :date="date.date" :weekDay="date.weekday" :index="index"/>
          </div>         
          <div class="cotrol-times">
             <p>{{t('raffleMorningLabel')}} {{morningTime}}</p>  
