@@ -42,7 +42,7 @@
     </div>
     <div class="game-layout-display">     
       <DisplayNumbers :numbers="[raffleNumber]" :logo="require('@/modules/lottery/assets/img/'+game.img)"/>
-      <DisplayBet  @on-bet="onBetTap" :bet="bet" :betLabel="t('betAmountLabel')+currency"/>
+      <DisplayBet  @on-bet="onBetTap" :bet="bet.toString()" :betLabel="t('betAmountLabel')+currency"/>
       <DisplayReventadosBet ref="displayReventadosBet" @on-busted-bet="onBustedBetTap"  @on-busted-change="onBustedChange" :busteEnabled="bustedEnabled"  :bet="bustedBetValue" :betLabel="t('reventadoBetAmountLabel')" :reventadosLabel="t('reventadoLabel')"/>
       <DisplayNotifications v-if="!mobile" :title="t('notificationsLabel')" :type="notificationType" :notification="notificationText"/>
       <SelectType v-if="!mobile" :defaultIndex="defaultBetTypeIndex"  @type-change="onBetTypeChange" :title="t('betTypeLabel')" :buttons="typeButtons"/>

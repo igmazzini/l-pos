@@ -10,11 +10,15 @@ const store = createStore({
         currency:'₡',
         mobile:false,
         isLoading:false,
+        isPrinting:false,
         language:'ENG_US',
     },
     mutations:{
         setLoading(state,loading){
             state.isLoading = loading;
+        },
+        setPrinting(state,printing){
+            state.isPrinting = printing;
         },
         setTitle(state,title){
             state.title = title;
@@ -42,6 +46,9 @@ const store = createStore({
         },
         language(state){
             return state.language
+        },
+        isPrinting(state){
+            return state.isPrinting
         }
     }
     

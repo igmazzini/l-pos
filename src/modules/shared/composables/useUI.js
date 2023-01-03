@@ -20,6 +20,10 @@ export const useUI = () => {
 
       locale.value = lang;
   }
+  const setPrinting = ( val ) =>{
+
+      store.commit('setPrinting',val);      
+  }
 
   const subString = (text, characters = 15) => {
     return String(text).substring(0, characters);
@@ -73,7 +77,7 @@ export const useUI = () => {
   }
 
 
-  const printTicket = (ticket, ticketImage, gameName, numbersAmount, maxNumbers) => {
+  const printTicket = async (ticket, ticketImage, gameName, numbersAmount, maxNumbers) => {
 
 
     const minDocHeight = 80;
@@ -95,7 +99,27 @@ export const useUI = () => {
       scaleCanvas = 1.5;
     }
 
-    html2canvas(ticket, {
+    try {      
+
+      const canvas = await html2canvas(ticket, {
+        scale: scaleCanvas, width: ticket.offsetWidth,
+        height: ticket.offsetHeight
+      });
+
+      const imgData = canvas.toDataURL('image/png');
+
+      const fileName = `${gameName}-${getPrintDate().replaceAll(' ', '-')}.pdf`;
+
+      doc.addImage(imgData, 'PNG', 0, 0, doc.internal.pageSize.getWidth(), doc.internal.pageSize.getHeight());
+
+      doc.save(fileName);
+      
+    } catch (error) {
+      console.log('Print error');
+      console.log(error);
+    }
+
+   /*  html2canvas(ticket, {
       scale: scaleCanvas, width: ticket.offsetWidth,
       height: ticket.offsetHeight
     }).then(function (canvas) {
@@ -114,13 +138,14 @@ export const useUI = () => {
       .catch((error) => {
         console.log('Print error');
         console.log(error);
-      });
+      }); */
   }
 
   return {
     currency: computed(() => store.state.currency),
     mobile: computed(() => store.state.mobile),
     version: computed(() => store.state.version),
+    printing: computed(() => store.getters['isPrinting']),
     lang: computed(() => store.getters['language']),
     setTitle,
     getIndex,
@@ -128,6 +153,7 @@ export const useUI = () => {
     formatAmount,
     getPrintDate,
     printTicket,
-    setLanguage
+    setLanguage,
+    setPrinting
   }
 };

@@ -1,6 +1,15 @@
 <template>
   <div class="ticket-modal-container">
     <div class="ticket-modal animate__animated animate__zoomIn animate__faster">
+        <div v-if="printing" class="printing-message animate__animated animate__fadeIn animate__faster">
+            <span>
+                <svg xmlns="http://www.w3.org/2000/svg" :width="!mobile ? 170 : 100" :height="!mobile ? 170 : 100" fill="currentColor" class="bi bi-printer-fill" viewBox="0 0 16 16">
+                <path d="M5 1a2 2 0 0 0-2 2v1h10V3a2 2 0 0 0-2-2H5zm6 8H5a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1z"/>
+                <path d="M0 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1v-2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2H2a2 2 0 0 1-2-2V7zm2.5 1a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
+                </svg>
+            </span>
+            <p>{{t('modalPrinting')}}...</p>
+        </div>
         <div class="ticket-modal-title">
             <p>{{t('printModalTitle')}}</p>
         </div>
@@ -88,7 +97,7 @@ export default {
     setup(props, context){
 
         const { t } = useI18n(); 
-        const { getIndex, formatAmount, getPrintDate, printTicket } = useUI();
+        const { mobile, getIndex, formatAmount, getPrintDate, printTicket, setPrinting, printing } = useUI();
         const qrValue =  ref('129698-56469');
 
         
@@ -105,10 +114,19 @@ export default {
             return total;
         }
 
-        const onAccept = () =>{
+        const onAccept = async () =>{
 
-            printTicket(document.getElementById('printTicket'),document.getElementById('ticketImage'),props.game,props.numbers.length,10);
-            //context.emit('on-accept');
+           setPrinting(true);  
+
+           await printTicket(document.getElementById('printTicket'),document.getElementById('ticketImage'),props.game,props.numbers.length,10);
+           
+
+            setTimeout(() => {
+                setPrinting(false);
+                context.emit('on-accept');
+            }, 1000);
+
+            
         }
 
         const onCancel = () =>{
@@ -123,6 +141,8 @@ export default {
             formatAmount,
             getPrintDate,
             qrValue,
+            mobile,
+            printing,
             getTotal,
             onAccept,
             onCancel,

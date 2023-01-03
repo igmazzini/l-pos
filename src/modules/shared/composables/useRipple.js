@@ -2,6 +2,9 @@
 export const useRipple = () => {
     
     const createRipple = (event) => {
+
+        if(!event) return;
+        
         const button = event.currentTarget;
         const circle = document.createElement("span");
 

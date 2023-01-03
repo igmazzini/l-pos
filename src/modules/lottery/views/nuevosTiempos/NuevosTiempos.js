@@ -325,6 +325,7 @@ export default defineComponent({
     }
 
     const onPrintAccept = () =>{
+      onClear();
       showPrintModal.value = false;
     }
     
