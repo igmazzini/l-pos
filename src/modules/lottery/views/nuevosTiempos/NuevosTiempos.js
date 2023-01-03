@@ -90,9 +90,9 @@ export default defineComponent({
 
     setTimes(['M','N']);
 
-    setMorningTime('9:00');
+    setMorningTime('12:00');
 
-    setNightTime('11:00');
+    setNightTime('19:00');
 
     defaultDateIndex.value =  setDefaultDate();
 
