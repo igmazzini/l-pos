@@ -68,9 +68,7 @@ export const useTime = () => {
   }
 
   const checkLimitTime = (morningTime, nightTime) => {
-
-    console.log(morningTime)
-    console.log(nightTime)
+   
 
     let currentDate = new Date();
     let hours = currentDate.getHours();
@@ -95,10 +93,7 @@ export const useTime = () => {
     limitNightDate.setHours(limitNightTime.split(":")[0]);
     limitNightDate.setMinutes(limitNightTime.split(":")[1]);
     limitNightDate.setSeconds(limitNightTime.split(":")[2]);
-
-
-    console.log('limitMorningDate',limitMorningDate);
-    console.log('limitNightDate',limitNightDate);
+   
 
     let outData = {
       enableDate:false,
