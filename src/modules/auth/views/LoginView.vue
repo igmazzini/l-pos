@@ -49,7 +49,7 @@
 
 <script>
 import { useAuth } from '@/modules/auth/composables/useAuth';
-import { useUI } from '@/modules/shared/composables/useUI';
+import { useUI } from '@/modules/shared/composables';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { ref, watchEffect } from 'vue';

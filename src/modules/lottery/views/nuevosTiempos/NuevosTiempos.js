@@ -1,25 +1,21 @@
 import { onMounted, ref, watch, defineComponent } from 'vue';
-import { useRipple } from "../../../shared/composables/useRipple";
-import DisplayInfo            from '../../components/NuevosTiempos/DisplayInfo.vue'
-import DisplayNumbers         from '../../components/DisplayNumbers.vue';
-import DisplayBet             from '../../components/DisplayBet.vue';
-import DisplayReventadosBet             from '../../components/DisplayReventadosBet.vue';
-import DisplayNotifications   from '../../components/DisplayNotifications.vue';
-import SelectType             from '../../components/SelectType.vue';
-import SelectBet              from '../../components/SelectBet.vue';
-import SelectDate             from '../../components/SelectDate.vue';
-import KeyBoard               from '../../components/KeyBoard.vue';
-import DeleteMobileMenu       from '../../components/DeletMobileMenu.vue';
-import DatesMobileMenu        from '../../components/DatesMobileMenu.vue';
+
+
+
+import {DatesMobileMenu, DisplayNumbers, DisplayBet, DisplayReventadosBet, DisplayNotifications,
+SelectType, SelectBet, SelectDate, KeyBoard, DeleteMobileMenu}  from '@/modules/lottery/components';
+
 import TicketModal            from '@/modules/shared/components/TicketModal/TicketModal.vue';
 import TicketModalNumbers     from '../../components/NuevosTiempos/TicketModalNumbers.vue';
 import PrintTicketNumbers     from '../../components/NuevosTiempos/PrintTicketNumbers .vue';
+import DisplayInfo            from '../../components/NuevosTiempos/DisplayInfo.vue'
 
 import { useI18n } from 'vue-i18n';
-import {checkEqualsDigits, checkDuplicateBetNumber , getRandomInRange} from '../../../shared/utils/utils.js';
-import { useTime } from '@/modules/shared/composables/useTime';
-import { useUI } from '@/modules/shared/composables/useUI';
-import { useGame } from '@/modules/lottery/composables/useGame';
+import {checkEqualsDigits, checkDuplicateBetNumber , getRandomInRange} from '@/modules/shared/utils/utils.js';
+import { useTime, useRipple, useUI } from '@/modules/shared/composables';
+import { useGame, useGameUI } from '@/modules/lottery/composables';
+
+
 
 
 export default defineComponent({
@@ -65,38 +61,16 @@ export default defineComponent({
     const { mobile, version, currency, lang } = useUI();
     const { game, setGame, state, setState, bet, setBet, totalBet, validateBet, betType, setBetType, setNumber, raffleNumber, raffles, setRaffles, notificationText, notificationType, setNotification,
     resetGame, deleteRaffle,emptyRaffles, dates, setDates,changeDate,selectedDates, setDefaultDate, times, setTimes, changeTime, morningTime, nightTime, setMorningTime, setNightTime } = useGame();
+    const {deleteMobileMenu, mobileDateMenu, printModal, defaultBetTypeIndex, setDefaultBetTypeIndex, defaultBetIndex, setDefaultBetIndex, defaultDateIndex, setDefaultDateIndex,
+     blindRooster, setBlindRoosterMode , customBet , setCustomBetMode, showDeleteMenu, hideDeleteMenu, showPrintModal, hidePrintModal, showDatesMenu, hideDatesMenu } = useGameUI();  
     const { createRipple } = useRipple(); 
 
       
-    const displayReventadosBet = ref(null); 
-    const deleteMobileMenu = ref(null);    
-    const mobileDateMenu = ref(null);
-    const showPrintModal = ref(false);   
+    const displayReventadosBet = ref(null);  
     const bustedBetValue = ref('-');      
-      
-    const bustedEnabled = ref(true);   
-    const defaultBetTypeIndex = ref(-1);
-    const defaultBetIndex = ref(-1);
-    const defaultDateIndex = ref(0);
+    const bustedEnabled = ref(true);
+    let bustedOn = false;
 
-
-    setGame({name:'NuevosTiempos',img:'nuevosTiemposLogo.png'});    
-    
-    setState(SET_NUMBER_STATE);
-
-    setBetType(EXACT_BET_TYPE);
-
-    setDates(getDates(t));  
-
-    setTimes(['M','N']);
-
-    setMorningTime('12:00');
-
-    setNightTime('19:00');
-
-    defaultDateIndex.value =  setDefaultDate();
-
-   
     const typeButtons = ref([
       {label:t('exactBetTypeLabel'),value:EXACT_BET_TYPE},
       {label:t('reversibleBetTypeLabel'),value:REVERSIBLE_BET_TYPE},
@@ -119,19 +93,29 @@ export default defineComponent({
       {label:'<',value:'<'},
       {label:'0',value:'0'},
       {label:t('deleteLabelButton'),value:'delete'},
-      ]);      
-    
-    let customBet = false;
-    let blindRooster = false;
-    let bustedOn = false;
-    
+      ]); 
 
     if(mobile.value){
       betButtons.value = ['100','...'];
-    }   
+    }  
 
+
+    setGame({name:'NuevosTiempos',img:'nuevosTiemposLogo.png'});    
     
-   
+    setState(SET_NUMBER_STATE);
+
+    setBetType(EXACT_BET_TYPE);
+
+    setDates(getDates(t));  
+
+    setTimes(['M','N']);
+
+    setMorningTime('12:00');
+
+    setNightTime('19:00');
+
+    setDefaultDateIndex( setDefaultDate() );  
+    
     
     watch(lang, ()=>{
       
@@ -141,6 +125,12 @@ export default defineComponent({
 
       setInitialNotification();
       
+
+    });
+
+    watch(mobile, ()=>{        
+
+      setButtonsLabels();         
 
     });
     
@@ -164,7 +154,7 @@ export default defineComponent({
        
 
         if(val.length == 0 && blindRooster){
-          blindRooster = false;
+          setBlindRoosterMode(false);
         }
       
     });
@@ -207,8 +197,7 @@ export default defineComponent({
         }
 
           
-    }
-    
+    }    
 
     const onKeyBoardChange = (keyBoardValue) => {
      
@@ -236,7 +225,7 @@ export default defineComponent({
           break;
         case SET_BET_STATE:
 
-            if(customBet){
+            if(customBet.value){
 
               setBet(keyBoardValue,true);
 
@@ -245,7 +234,7 @@ export default defineComponent({
           break;
         case SET_BUSTED_BET_STATE:
 
-            if(customBet){
+            if(customBet.value){
               setBustedBetValue(keyBoardValue);
             }  
 
@@ -264,7 +253,7 @@ export default defineComponent({
 
             if( validateBet(MAX_BET,MIN_BET) ){
 
-              customBet = false;
+              setCustomBetMode(false)
              
               setState(SET_NUMBER_STATE);
 
@@ -279,14 +268,15 @@ export default defineComponent({
               
             }
 
-            defaultBetIndex.value = -1;
+            
+            setDefaultBetIndex(-1);
            
           break;
         case SET_BUSTED_BET_STATE:
             
             if( validateBustedBet()){ 
 
-              customBet = false;
+              setCustomBetMode(false)
              
               setState(SET_NUMBER_STATE);
 
@@ -301,7 +291,7 @@ export default defineComponent({
               }
             }
 
-            defaultBetIndex.value = -1;
+            setDefaultBetIndex(-1);
 
           break;
       
@@ -319,23 +309,8 @@ export default defineComponent({
 
         createRaffles();
         
-    }
-
-    const onPrint = () =>{
-
-        createRipple(event);        
-        showPrintModal.value = true;
-    }
-
-    const onPrintAccept = () =>{
-      onClear();
-      showPrintModal.value = false;
-    }
-    
-    const onPrintCancel = () =>{
-      showPrintModal.value = false;
-    }
-
+    }       
+   
     const onClear = () =>{
 
       createRipple(event);      
@@ -351,7 +326,7 @@ export default defineComponent({
 
        createRipple(event);
 
-       blindRooster = true;
+       setBlindRoosterMode(true);
 
        switch (betType.value) {
          case EXACT_BET_TYPE:
@@ -380,10 +355,14 @@ export default defineComponent({
          if(betButtons.value[index] == '...'){
           
             bustedBetValue.value = '-';   
-            customBet = true; 
+
+            setCustomBetMode(true);
+
             
           }else{   
-            customBet = false;         
+
+            setCustomBetMode(false);  
+
             bustedBetValue.value = betButtons.value[index];           
           }
 
@@ -393,14 +372,14 @@ export default defineComponent({
               
             setBet('-'); 
 
-            customBet = true; 
+            setCustomBetMode(true); 
 
             setState(SET_BET_STATE);
            
           
           }else{
             
-            customBet = false;
+            setCustomBetMode(false);
 
             setBet(betButtons.value[index]);
             
@@ -449,17 +428,17 @@ export default defineComponent({
 
       setBet('-'); 
 
-      customBet = true;        
+      setCustomBetMode(true);        
 
       setState(SET_BET_STATE);
 
       if(mobile){
 
-         defaultBetIndex.value = 1;
+        setDefaultBetIndex(1);
 
       }else{
 
-         defaultBetIndex.value = 7;
+        setDefaultBetIndex(7)
 
       } 
      
@@ -493,15 +472,15 @@ export default defineComponent({
        
         setState(SET_BUSTED_BET_STATE);  
 
-        customBet = true;   
+        setCustomBetMode(true);   
 
         if(mobile){
 
-          defaultBetIndex.value = 1;
+          setDefaultBetIndex(1);
 
         }else{
 
-          defaultBetIndex.value = 7;
+          setDefaultBetIndex(7);
         } 
       }
     }   
@@ -515,16 +494,62 @@ export default defineComponent({
     const onDateChange = ( data ) =>{
         
         changeDate(data);
-    }
+    };
 
     const onTimeChange = ( data ) =>{
         
         changeTime(data);
-    }
+    };
 
-    const onMobileDatesAccept = () => {
-      mobileDateMenu.value.hideMenu();
-    }
+    const onPrint = () =>{
+        showPrintModal();
+    };
+
+    const onPrintAccept = () =>{
+      onClear();
+      hidePrintModal();
+    }  
+    
+    const onPrintCancel = () =>{
+      hidePrintModal();
+    };
+
+    const onMobileDelete = () =>{
+      showDeleteMenu()
+    };
+
+    const onMobileMenuClear = () =>{
+
+      onClear();       
+      hideDeleteMenu();
+
+    };   
+
+    const  onMobileMenuClose = () =>{
+        hideDeleteMenu();
+    }; 
+    
+    const onMobileDates = () =>{
+        showDatesMenu();
+    };
+   
+      
+    const onMobileDatesAccept = () =>{
+        hideDatesMenu()
+    };
+
+    const  onMobileDatesCancel = () =>{
+      hideDatesMenu();
+    };
+    
+    
+    const onMobileDatesClose = () =>{
+        hideDatesMenu();
+    };
+
+    
+
+  
 
 
     /* END UI FUNCTIONS */
@@ -677,7 +702,7 @@ export default defineComponent({
 
         //raffleNumberType = raffleNumberType[0].toUpperCase() + raffleNumberType.substr(1,raffleNumberType.length);
 
-        if(blindRooster){
+        if(blindRooster.value){
             raffleNumberType += ` (${t('ticketTypeBlindRooster')})`;
         }
 
@@ -790,8 +815,8 @@ export default defineComponent({
 
     onMounted(()=>{
 
-      defaultBetTypeIndex.value = 0;
-      defaultBetIndex.value = 0;       
+      setDefaultBetTypeIndex(0);
+      setDefaultBetIndex(0);    
 
       setInitialNotification();
      
@@ -836,7 +861,7 @@ export default defineComponent({
       defaultBetTypeIndex,
       defaultBetIndex,     
       defaultDateIndex,
-      showPrintModal,
+      printModal,
       onClear,
       onKeyBoardChange,
       onBetChange,
@@ -849,31 +874,14 @@ export default defineComponent({
       onTimeChange,     
       onPrintAccept, 
       onPrintCancel, 
-      onDelete,  
+      onDelete,        
+      onMobileDelete,
+      onMobileMenuClose,
+      onMobileMenuClear,
       onMobileDatesAccept,
-      onMobileDelete(){      
-
-        deleteMobileMenu.value.showMenu();
-      },
-      onMobileMenuClose(){
-      
-        deleteMobileMenu.value.hideMenu();
-      },
-      onMobileMenuClear(){
-        onClear();       
-        deleteMobileMenu.value.hideMenu();
-      },
-      onMobileDates(){
-        mobileDateMenu.value.showMenu();
-        
-      },
-      onMobileDatesClose(){
-        
-        mobileDateMenu.value.hideMenu();
-      },
-      onMobileDatesCancel(){
-        mobileDateMenu.value.hideMenu();
-      },
+      onMobileDates,
+      onMobileDatesClose,
+      onMobileDatesCancel,
      
     }
   }

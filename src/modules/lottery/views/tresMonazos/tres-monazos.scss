@@ -49,8 +49,10 @@
             width: 100%;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             padding: 15px;
+            min-height: 30%;
+           
 
             p{
                 text-align: left;
@@ -76,6 +78,8 @@
                 background-color: var(--error-color);
                 position: relative;
                 overflow: hidden;
+                margin-top: auto;
+               
             }
        }
 

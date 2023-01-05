@@ -6,7 +6,7 @@
 <script>
 import { computed, onUnmounted } from 'vue'
 import { useStore } from 'vuex';
-import { useScreen } from '@/modules/shared/composables/useScreen.js'
+import { useScreen } from '@/modules/shared/composables';
 
 export default {
   name: 'App', 

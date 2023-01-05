@@ -1,7 +1,7 @@
 <script src="./TresMonazos.js"></script>
 <template>
  <Transition  >
-    <TicketModal @on-accept="onPrintAccept" @on-cancel="onPrintCancel" :game="game.name" :logo="require('@/modules/lottery/assets/img/'+game.img)" :numbers="raffles" v-if="showPrintModal">
+    <TicketModal @on-accept="onPrintAccept" @on-cancel="onPrintCancel" :game="game.name" :logo="require('@/modules/lottery/assets/img/'+game.img)" :numbers="raffles" v-if="printModal">
       <template v-slot:numbers-list>
         <TicketModalNumbers :numbers="raffles"/>
       </template>

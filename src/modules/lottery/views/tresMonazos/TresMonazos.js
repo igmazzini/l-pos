@@ -1,26 +1,19 @@
 import { defineComponent, ref, onMounted, watch } from 'vue';
-import { useRipple } from "../../../shared/composables/useRipple";
 
-import DisplayInfo            from '../../components/TresMonazos/DisplayInfo.vue';
-import DisplayNumbers         from '../../components/DisplayNumbers.vue';
-import DisplayBet             from '../../components/DisplayBet.vue';
-import DisplayNotifications   from '../../components/DisplayNotifications.vue';
-import SelectType             from '../../components/SelectType.vue';
-import SelectBet              from '../../components/SelectBet.vue';
-import SelectDate             from '../../components/SelectDate.vue';
-import KeyBoard               from '../../components/KeyBoard.vue';
-import DeleteMobileMenu       from '../../components/DeletMobileMenu.vue';
-import DatesMobileMenu        from '../../components/DatesMobileMenu.vue';
+import {DatesMobileMenu, DisplayNumbers, DisplayBet, DisplayNotifications,
+  SelectType, SelectBet, SelectDate, KeyBoard, DeleteMobileMenu }  from '@/modules/lottery/components';
+
 import TicketModalNumbers     from '../../components/TresMonazos/TicketModalNumbers.vue';
 import PrintTicketNumbers     from '../../components/TresMonazos/PrintTicketNumbers .vue';
+import DisplayInfo            from '../../components/TresMonazos/DisplayInfo.vue';
+
 import TicketModal            from '@/modules/shared/components/TicketModal/TicketModal.vue';
 
 import { useI18n } from 'vue-i18n';
-import { useUI } from '@/modules/shared/composables/useUI';
-import { useTime } from '@/modules/shared/composables/useTime';
-import { useGame } from '@/modules/lottery/composables/useGame';
+import { useTime, useRipple, useUI } from '@/modules/shared/composables';
+import { useGame, useGameUI} from '@/modules/lottery/composables';
 
-import {checkEqualsDigits, checkDuplicateBetNumber, getRandomInRange } from '../../../shared/utils/utils.js';
+import {checkEqualsDigits, checkDuplicateBetNumber, getRandomInRange } from '@/modules/shared/utils/utils.js';
 
 export default defineComponent( {
  name: "TresMonazos",
@@ -62,37 +55,15 @@ export default defineComponent( {
 
     const { t } = useI18n();
     const { getDates } = useTime();    
-    const { mobile, version, currency } = useUI();
+    const { mobile, version, currency, lang } = useUI();
     const { game, setGame, state, setState, bet, setBet, totalBet, validateBet, betType, setBetType, setNumber, raffleNumber, raffles, setRaffles, notificationText, notificationType, setNotification,
     resetGame, deleteRaffle,emptyRaffles, dates, setDates,changeDate,selectedDates, setDefaultDate , times, setTimes, changeTime, morningTime, nightTime, setMorningTime, setNightTime } = useGame();
-    const { createRipple } = useRipple(); 
-
-    const mobileDateMenu = ref(null);
-    const deleteMobileMenu = ref(null);
-    const defaultBetTypeIndex = ref(-1);
-    const defaultBetIndex = ref(-1);
-    const defaultDateIndex = ref(0);
+    const {deleteMobileMenu, mobileDateMenu, printModal, defaultBetTypeIndex, setDefaultBetTypeIndex, defaultBetIndex, setDefaultBetIndex, defaultDateIndex, setDefaultDateIndex,
+      blindRooster, setBlindRoosterMode , customBet , setCustomBetMode, showDeleteMenu, hideDeleteMenu, showPrintModal, hidePrintModal, showDatesMenu, hideDatesMenu } = useGameUI(); 
    
-    setGame({name:'TresMonazos',img:'tresMonazosLogo.png'});    
-
-    setBet(DEFAULT_BET);
-    
-    setState(SET_NUMBER_STATE);
-
-    setBetType(ORDER_BET_TYPE);
-
-    setDates(getDates(t));  
-
-    setTimes(['M','N']);
-
-    setMorningTime('12:00');
-
-    setNightTime('19:00');
-
-    defaultDateIndex.value =  setDefaultDate();
+    const { createRipple } = useRipple();    
 
 
-    
     const typeButtons = ref([
       {label:t('orderBetTypeLabel'),value:ORDER_BET_TYPE},
       {label:t('disorderBetTypeLabel'),value:DISORDER_BET_TYPE},
@@ -116,21 +87,35 @@ export default defineComponent( {
       {label:'0',value:'0'},
       {label:t('deleteLabelButton'),value:'delete'},
       ]);
-   
+
+
+      if(mobile.value){
+        betButtons.value = ['100','...'];
+        typeButtons.value[2] = {label:t('orderDisorderBetTypeLabelShort'),value:ORD_DIS_BET_TYPE};
+        
+      }
     
-    
    
-    const showPrintModal = ref(false); 
 
    
-    let customBet = false;
-    let blindRooster = false;     
+    setGame({name:'TresMonazos',img:'tresMonazosLogo.png'});    
 
-    if(mobile.value){
-      betButtons.value = ['100','...'];
-      typeButtons.value[2] = {label:t('orderDisorderBetTypeLabelShort'),value:ORD_DIS_BET_TYPE};
-      
-    }
+    setBet(DEFAULT_BET);
+    
+    setState(SET_NUMBER_STATE);
+
+    setBetType(ORDER_BET_TYPE);
+
+    setDates(getDates(t));  
+
+    setTimes(['M','N']);
+
+    setMorningTime('12:00');
+
+    setNightTime('19:00');
+
+    setDefaultDateIndex(setDefaultDate());   
+   
 
 
     watch(state,()=>{
@@ -146,11 +131,71 @@ export default defineComponent( {
 
       }
     });
+
+    watch(raffleNumber,(val)=>{        
+       
+
+      if(val.length == 0 && blindRooster){
+        setBlindRoosterMode(false);
+      }
+    
+    });
+
+    watch(mobile,()=>{    
+       
+
+      setButtonsLabels();      
+    
+    });
+   
+    watch(lang,()=>{        
+       
+
+      setButtonsLabels();
+
+      setInitialNotification();
+    
+    });
    
 
     /* UI FUNCTIONS  */
 
-     const onKeyBoardChange = (keyBoardValue) => {
+    const setButtonsLabels = () =>{
+      typeButtons.value = [
+        {label:t('orderBetTypeLabel'),value:ORDER_BET_TYPE},
+        {label:t('disorderBetTypeLabel'),value:DISORDER_BET_TYPE},
+        {label:t('orderDisorderBetTypeLabel'),value:ORD_DIS_BET_TYPE},
+        {label:t('lastTwoBetTypeLabel'),value:LAST_TWO_BET_TYPE}
+        ];
+
+      betButtons.value = ['100','200','300','400','500','1000','2000','...'];
+
+      keyBoardButtons.value = [
+        {label:'7',value:'7'},
+        {label:'8',value:'8'},
+        {label:'9',value:'9'},
+        {label:t('printLabelButton'),value:'print'},
+        {label:'4',value:'4'},
+        {label:'5',value:'5'},
+        {label:'6',value:'6'},
+        {label:'1',value:'1'},
+        {label:'2',value:'2'},
+        {label:'3',value:'3'},
+        {label:t('enterLabelButton'),value:'insert'},
+        {label:'<',value:'<'},
+        {label:'0',value:'0'},
+        {label:t('deleteLabelButton'),value:'delete'},
+        ];
+  
+  
+        if(mobile.value){
+          betButtons.value = ['100','...'];
+          typeButtons.value[2] = {label:t('orderDisorderBetTypeLabelShort'),value:ORD_DIS_BET_TYPE};
+          
+        }
+    }
+
+    const onKeyBoardChange = (keyBoardValue) => {
      
      
       if(keyBoardValue.toLowerCase() == 'print'){
@@ -177,7 +222,7 @@ export default defineComponent( {
           break;
         case SET_BET_STATE:
 
-            if(customBet){
+            if(customBet.value){
               setBet(keyBoardValue, true);
             }
             
@@ -196,7 +241,7 @@ export default defineComponent( {
 
             if( validateBet(MAX_BET,MIN_BET) ){
 
-              customBet = false;
+              setCustomBetMode(false);
 
               setState(SET_NUMBER_STATE);
 
@@ -211,7 +256,7 @@ export default defineComponent( {
               
             }
 
-            defaultBetIndex.value = -1;
+            setDefaultBetIndex(-1);
            
           break;    
       
@@ -229,21 +274,7 @@ export default defineComponent( {
 
         createRaffles();
         
-    }
-
-    const onPrint = () =>{
-      
-        createRipple(event);        
-        showPrintModal.value = true;
-    }
-
-    const onPrintAccept = () =>{
-      showPrintModal.value = false;
-    }
-
-    const onPrintCancel = () =>{
-      showPrintModal.value = false;
-    }
+    }   
 
     const  onDateChange = (data) => {
       
@@ -284,13 +315,13 @@ export default defineComponent( {
               
             setBet('-'); 
 
-            customBet = true; 
+            setCustomBetMode(true); 
 
             setState(SET_BET_STATE);           
           
       }else{
             
-            customBet = false;
+            setCustomBetMode(false);
 
             setBet(betButtons.value[index]);
             
@@ -303,7 +334,7 @@ export default defineComponent( {
 
        createRipple(event);
 
-       blindRooster = true;
+       setBlindRoosterMode(true);
 
        switch (betType.value) {
          case ORDER_BET_TYPE:
@@ -319,6 +350,54 @@ export default defineComponent( {
            break;
        }
     }
+
+
+  
+    const onPrint = () =>{
+        showPrintModal();
+    };
+
+    const onPrintAccept = () =>{
+      onClear();
+      hidePrintModal();
+    }  
+    
+    const onPrintCancel = () =>{
+      hidePrintModal();
+    };
+
+    const onMobileDelete = () =>{
+      showDeleteMenu()
+    };
+
+    const onMobileMenuClear = () =>{
+
+      onClear();       
+      hideDeleteMenu();
+      
+    };   
+
+    const  onMobileMenuClose = () =>{
+        hideDeleteMenu();
+    }; 
+    
+    const onMobileDates = () =>{
+        showDatesMenu();
+    };
+  
+      
+    const onMobileDatesAccept = () =>{
+        hideDatesMenu()
+    };
+
+    const  onMobileDatesCancel = () =>{
+      hideDatesMenu();
+    };
+    
+    
+    const onMobileDatesClose = () =>{
+        hideDatesMenu();
+    };
 
 
     /* NOTIFICATIONS */
@@ -389,6 +468,14 @@ export default defineComponent( {
 
         return true;
     }
+
+    const onDelete = ( index )=>{
+      
+      deleteRaffle( index );
+
+    };
+
+  
     
 
     /* DATA FUNCTIONS */
@@ -426,7 +513,7 @@ export default defineComponent( {
 
         
 
-        if(blindRooster){
+        if(blindRooster.value){
           raffleNumberType += ` (${t('ticketTypeBlindRooster')})`;
         }
 
@@ -526,19 +613,15 @@ export default defineComponent( {
       }
     }
 
-    const onDelete = ( index )=>{
-      
-      deleteRaffle( index );
-
-    };
+   
 
    
 
     onMounted( ()=>{
 
 
-      defaultBetTypeIndex.value = 0;
-      defaultBetIndex.value = 0;     
+      setDefaultBetTypeIndex(0);
+      setDefaultBetIndex(0);     
     
 
       setInitialNotification();
@@ -576,7 +659,7 @@ export default defineComponent( {
      
      
        
-      showPrintModal,
+      printModal,
       onPrintAccept,
       onPrintCancel,
       onKeyBoardChange,
@@ -587,27 +670,13 @@ export default defineComponent( {
       onBetChange,        
       onDelete,
       onBlindRooster,
-      onMobileDelete(){
-        deleteMobileMenu.value.showMenu();
-      },
-      onMobileMenuClose(){
-        deleteMobileMenu.value.hideMenu();
-      },
-      onMobileMenuClear(){
-        deleteMobileMenu.value.hideMenu();
-      },
-      onMobileDates(){
-        mobileDateMenu.value.showMenu();
-      },
-      onMobileDatesClose(){
-        mobileDateMenu.value.hideMenu();
-      },
-      onMobileDatesCancel(){
-        mobileDateMenu.value.hideMenu();
-      },
-      onMobileDatesAccept(){
-        mobileDateMenu.value.hideMenu();
-      }
+      onMobileDelete,
+      onMobileMenuClose,
+      onMobileMenuClear,
+      onMobileDates,
+      onMobileDatesClose,
+      onMobileDatesCancel,
+      onMobileDatesAccept
     }
   }
 });

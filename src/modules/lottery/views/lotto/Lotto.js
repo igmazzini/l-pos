@@ -1,21 +1,18 @@
 import { defineComponent, ref, onMounted, watch, watchEffect } from 'vue';
-import { useRipple } from "../../../shared/composables/useRipple";
-import DisplayInfo            from '../../components/Lotto/DisplayInfo.vue'
-import DisplayNumbers         from '../../components/DisplayNumbers.vue';
-import DisplayBet             from '../../components/DisplayBet.vue';
-import DisplayNotifications   from '../../components/DisplayNotifications.vue';
-import ToggleButton           from '../../components/ToggleButton.vue';
-import SelectDay              from '../../components/SelectDay.vue';
-import KeyBoard               from '../../components/KeyBoard.vue';
-import DeleteMobileMenu       from '../../components/DeletMobileMenu.vue';
+
+
+import { DisplayNumbers, SelectDay, DisplayBet, DisplayNotifications,
+KeyBoard, DeleteMobileMenu, ToggleButton}  from '@/modules/lottery/components';
+
 import TicketModalNumbers     from '../../components/Lotto/TicketModalNumbers.vue';
 import PrintTicketNumbers     from '../../components/Lotto/PrintTicketNumbers .vue';
+import DisplayInfo            from '../../components/Lotto/DisplayInfo.vue'
 import TicketModal            from '@/modules/shared/components/TicketModal/TicketModal.vue';
+
 import { useI18n } from 'vue-i18n';
-import { useGame } from '@/modules/lottery/composables/useGame';
-import { useUI } from '@/modules/shared/composables/useUI';
-import { useTime } from '@/modules/shared/composables/useTime';
-import { checkDuplicateBetNumber, getRandomIntExcludingExistingNumbers, hasDuplicates } from '../../../shared/utils/utils.js';
+import { useTime, useRipple, useUI } from '@/modules/shared/composables';
+import { useGame, useGameUI } from '@/modules/lottery/composables';
+import { checkDuplicateBetNumber, getRandomIntExcludingExistingNumbers, hasDuplicates } from '@/modules/shared/utils/utils.js';
 
 export default  defineComponent({
   name: "Lotto",
@@ -61,41 +58,19 @@ export default  defineComponent({
     const { mobile, version, currency, lang } = useUI();
     const { game, setGame, state, setState, bet, setBet, totalBet, validateBet, betType, setBetType, raffles, setRaffles, notificationText, notificationType, setNotification,
     resetGame, deleteRaffle,emptyRaffles, times, setTimes, changeTime, morningTime, nightTime, setMorningTime, setNightTime } = useGame();
+    
+    const {deleteMobileMenu, mobileDateMenu, printModal,  blindRooster, setBlindRoosterMode , showDeleteMenu, hideDeleteMenu, showPrintModal, hidePrintModal, showDatesMenu, hideDatesMenu } = useGameUI();  
+   
     const { createRipple } = useRipple();
     const raffleDays = ref([]);
-    const raffleDay = ref('');
-
-
-    const mobileDateMenu = ref(null);
-    const deleteMobileMenu = ref(null);
-    const showPrintModal = ref(false);
+    const raffleDay = ref('');   
 
     const raffleNumbers = ref(['','','','','']);
 
-    let blindRooster = false;      
 
-    setGame({name:'Lotto',img:'lottoLogo.png'});    
-
-    setBet(DEFAULT_BET);
-    
-    setState(FIRST_NUMBER_STATE);
-
-    setBetType(COMMON_BET_TYPE);     
-
-    setTimes(['M','N']);
-
-    setMorningTime('12:00');
-
-    setNightTime('19:00');   
-
-   
-   
-   
     const keyBoardButtons = ref(['7','8','9',t('printLabelButton'),'4','5','6','1','2','3',t('enterLabelButton'),'<','0',t('deleteLabelButton')]);
      
-   
-
-    
+      
 
      if(mobile.value){
       keyBoardButtons.value = [
@@ -167,12 +142,34 @@ export default  defineComponent({
       ];
      }
 
+         
+
+    setGame({name:'Lotto',img:'lottoLogo.png'});    
+
+    setBet(DEFAULT_BET);
+    
+    setState(FIRST_NUMBER_STATE);
+
+    setBetType(COMMON_BET_TYPE);     
+
+    setTimes(['M','N']);
+
+    setMorningTime('12:00');
+
+    setNightTime('19:00');     
+   
+    watch(mobile,()=>{
+
+      setButtonsLabels();
+      
+    });  
+    
+
     watch(lang,()=>{
 
       setButtonsLabels();
 
       setRaffleDays();
-
 
       setInitialNotification();
       
@@ -180,7 +177,7 @@ export default  defineComponent({
 
     watchEffect(()=>{      
 
-      if(mobile.value && !blindRooster && raffleNumbers.value[0].length > 0){
+      if(mobile.value && !blindRooster.value && raffleNumbers.value[0].length > 0){
           keyBoardButtons.value[13] = {label:t('nextLabelButton'),value:'confirm'};
       }
 
@@ -196,7 +193,7 @@ export default  defineComponent({
      /* UI FUNCTIONS  */
 
 
-     const setButtonsLabels = () =>{
+    const setButtonsLabels = () =>{
 
 
        
@@ -271,9 +268,9 @@ export default  defineComponent({
             {label:t('deleteLabelButton'),value:'delete'},
           ];
         }
-     }
+    };
 
-     const onKeyBoardChange = (keyBoardValue) => {
+    const onKeyBoardChange = (keyBoardValue) => {
      
      
       if(keyBoardValue.toLowerCase() == 'print'){
@@ -295,7 +292,7 @@ export default  defineComponent({
 
       setNumberValue(keyBoardValue);
        
-    }
+    };
 
 
     const onInsert = () =>{
@@ -305,8 +302,7 @@ export default  defineComponent({
 
         createRaffles();
         
-    }
-
+    };
 
     const onConfirm = () =>{
 
@@ -374,21 +370,52 @@ export default  defineComponent({
         }
       }
      
-    }
+    };
 
     const onPrint = () =>{
-      
-        createRipple(event);        
-        showPrintModal.value = true;
-    }
+      showPrintModal();
+    };
 
     const onPrintAccept = () =>{
-      showPrintModal.value = false;
-    }
-
+      onClear();
+      hidePrintModal();
+    }  
+    
     const onPrintCancel = () =>{
-      showPrintModal.value = false;
-    }
+      hidePrintModal();
+    };
+
+    const onMobileDelete = () =>{
+      showDeleteMenu()
+    };
+
+    const onMobileMenuClear = () =>{
+
+      onClear();       
+      hideDeleteMenu();
+      
+    };   
+
+    const  onMobileMenuClose = () =>{
+        hideDeleteMenu();
+    }; 
+    
+    const onMobileDates = () =>{
+        showDatesMenu();
+    };
+
+      
+    const onMobileDatesAccept = () =>{
+        hideDatesMenu()
+    };
+
+    const  onMobileDatesCancel = () =>{
+      hideDatesMenu();
+    };    
+    
+    const onMobileDatesClose = () =>{
+        hideDatesMenu();
+    };
 
     const  onDateChange = (data) => {
       
@@ -404,8 +431,7 @@ export default  defineComponent({
 
     const onClear = () =>{
 
-      createRipple(event);  
-      
+      createRipple(event);        
       
       deleteNumbers();
 
@@ -416,10 +442,8 @@ export default  defineComponent({
       setInitialNotification();
     }
 
-    const onBetTypeChange = (value) =>{    
-      
-      
-      console.log(value);
+    const onBetTypeChange = (value) =>{        
+     
 
       if(value){
 
@@ -442,7 +466,7 @@ export default  defineComponent({
 
        createRipple(event);
 
-       blindRooster = true;
+       setBlindRoosterMode( true );
 
        let formatNumbers = ['','','','',''];
 
@@ -543,7 +567,7 @@ export default  defineComponent({
           numbers,
           type:betType.value,
           bet:bet.value,  
-          blindRooster: (blindRooster) ?   t('ticketTypeBlindRooster') : '',    
+          blindRooster: (blindRooster.value) ?   t('ticketTypeBlindRooster') : '',    
           date: `${raffleDay.value.weekday} ${raffleDay.value.date}`
         }
 
@@ -576,7 +600,7 @@ export default  defineComponent({
 
         raffleNumbers.value = ['','','','',''];        
 
-        blindRooster = false;
+        setBlindRoosterMode( false );
 
         setState(FIRST_NUMBER_STATE);
 
@@ -915,7 +939,7 @@ export default  defineComponent({
       morningTime,
       nightTime, 
       emptyRaffles, 
-      showPrintModal,
+      printModal,
       mobileDateMenu,
       deleteMobileMenu,       
       keyBoardButtons, 
@@ -932,28 +956,13 @@ export default  defineComponent({
       onPrintCancel,
       onPrintAccept,
 
-      onMobileDelete(){
-        deleteMobileMenu.value.showMenu();
-      },
-      onMobileMenuClose(){
-        deleteMobileMenu.value.hideMenu();
-      },
-      onMobileMenuClear(){
-        onClear();
-        deleteMobileMenu.value.hideMenu();
-      },
-      onMobileDates(){
-        mobileDateMenu.value.showMenu();
-      },
-      onMobileDatesClose(){
-        mobileDateMenu.value.hideMenu();
-      },
-      onMobileDatesCancel(){
-        mobileDateMenu.value.hideMenu();
-      },
-      onMobileDatesAccept(){
-        mobileDateMenu.value.hideMenu();
-      }
+      onMobileDelete,
+      onMobileMenuClose,
+      onMobileMenuClear,
+      onMobileDates,
+      onMobileDatesClose,
+      onMobileDatesCancel,
+      onMobileDatesAccept
     }
   }
 });
