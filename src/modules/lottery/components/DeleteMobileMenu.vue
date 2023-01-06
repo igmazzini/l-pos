@@ -22,20 +22,35 @@ export default {
     name:'DeleteMobileMenu',   
     emits: ["on-delete", "on-close"],
     setup(props,context){
-
+        
+        let open = false;
 
         const showMenu = () =>{
-            document.querySelector('.delete-menu--background').classList.add('show-background');
-            document.querySelector('.delete-menu--action').classList.add('show-menu');
-            document.querySelector('.delete-menu--background').classList.remove('hide-background');
-            document.querySelector('.delete-menu--action').classList.remove('hide-menu');
+
+            if(!open){
+
+                document.querySelector('.delete-menu--background').classList.add('show-background');
+                document.querySelector('.delete-menu--action').classList.add('show-menu');
+                document.querySelector('.delete-menu--background').classList.remove('hide-background');
+                document.querySelector('.delete-menu--action').classList.remove('hide-menu');    
+
+                open = true;
+            }
+            
         }
         const hideMenu = () =>{
+
+            if(open){
+
+                document.querySelector('.delete-menu--background').classList.add('hide-background');
+                document.querySelector('.delete-menu--action').classList.add('hide-menu');
+                document.querySelector('.delete-menu--background').classList.remove('show-background');
+                document.querySelector('.delete-menu--action').classList.remove('show-menu');
+
+                open = false;
+            }
           
-            document.querySelector('.delete-menu--background').classList.add('hide-background');
-            document.querySelector('.delete-menu--action').classList.add('hide-menu');
-            document.querySelector('.delete-menu--background').classList.remove('show-background');
-            document.querySelector('.delete-menu--action').classList.remove('show-menu');
+            
         }    
 
         const onBackClick = () => {

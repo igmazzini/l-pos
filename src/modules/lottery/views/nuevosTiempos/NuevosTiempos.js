@@ -201,7 +201,8 @@ export default defineComponent({
 
     const onKeyBoardChange = (keyBoardValue) => {
      
-     
+      hideDeleteMenu();
+      
       if(keyBoardValue.toLowerCase() == 'print'){
         
          onPrint();
@@ -325,6 +326,8 @@ export default defineComponent({
     const onBlindRooster = () =>{
 
        createRipple(event);
+
+       hideDeleteMenu();
 
        setBlindRoosterMode(true);
 

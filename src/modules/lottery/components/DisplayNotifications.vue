@@ -93,7 +93,7 @@ export default {
      font-size: 1.7rem;
      margin: 0;
      padding: 0;
-     margin-left: 8%;
+     margin-left: 12%;
   }
 }
 
@@ -134,6 +134,7 @@ export default {
 
     p{
      font-size: 1.4em;
+     margin-left: 9%;
     }
 
     
