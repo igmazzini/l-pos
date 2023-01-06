@@ -52,7 +52,7 @@ export default {
           
             document.querySelector('.dates-menu--background').classList.add('hide-background');
             document.querySelector('.dates-menu--action').classList.add('hide-menu');
-             document.querySelector('.dates-menu--background').classList.remove('show-background');
+            document.querySelector('.dates-menu--background').classList.remove('show-background');
             document.querySelector('.dates-menu--action').classList.remove('show-menu');
         }
 
