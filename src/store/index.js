@@ -5,7 +5,7 @@ import lotteryStore from '../modules/lottery/store'
 const store = createStore({
 
     state:{
-        version:'V 1.3',
+        version:'V 2.0',
         title:'Loteria',
         currency:'₡',
         mobile:false,
