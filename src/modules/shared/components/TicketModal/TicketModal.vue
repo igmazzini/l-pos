@@ -130,7 +130,7 @@ export default {
         }
 
         const onCancel = () =>{
-            context.emit('on-accept');
+            context.emit('on-cancel');
         }
 
       

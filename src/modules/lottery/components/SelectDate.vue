@@ -206,6 +206,20 @@ export default {
   background-color: var(--warning-color);
 }
 
+@media screen and (max-height: 950px) {
+
+  .date-button,
+    .time-button {
+    height: 45px;
+  }
+}
+@media screen and (max-height: 880px) {
+
+  .date-button,
+    .time-button {
+    height: 43px;
+  }
+}
 @media screen and (max-width: 1300px) {
   .date-button,
   .time-button {

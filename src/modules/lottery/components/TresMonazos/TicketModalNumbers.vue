@@ -3,7 +3,7 @@
             <li v-for="(data, index) of numbers" :key="data" >
                   <span class="index">{{ getIndex(index) }}</span>
                   <span v-for="num of data.numbers" :key="num" :class="['info-number', (num.length > 2) ? 'info-number-big' : '']">{{ num }}</span>
-                  <span>{{ data.type }}</span>
+                  <span>{{ subString(data.type,(mobile && data.type != t('orderDisorderBetTypeLabelShort') && data.type != `${t('orderDisorderBetTypeLabelShort')} (R)` && data.type != `${t('orderDisorderBetTypeLabelShort')} (GT)`) ? 3 : 20 ).toUpperCase() }}</span>
                   <span>{{ data.date }}</span>
                   <span>{{ formatAmount(data.bet) }}</span>
                   
@@ -12,6 +12,8 @@
 </template>
 
 <script>
+
+import { useI18n } from 'vue-i18n';
 import { useUI } from '@/modules/shared/composables/useUI';
 export default {
       name:'TicketModalNumbers',
@@ -22,10 +24,15 @@ export default {
             }
       },
       setup(){
-            const { getIndex, formatAmount } = useUI();
+
+            const { t } = useI18n();
+            const { getIndex, formatAmount, mobile, subString } = useUI();
 
             return{
+                  t,
+                  mobile,
                   getIndex,
+                  subString,
                   formatAmount
             }
       }
@@ -66,7 +73,7 @@ export default {
 li{
     display: grid;
    
-    grid-template-columns: 5% 10% repeat(3,1fr);
+    grid-template-columns: 5% 5% 1fr 20% 15%;
     align-items: center;
     justify-items: start;
     margin: 5px 0;
@@ -82,6 +89,11 @@ li{
     span:first-child{
       justify-self: start;
     }
+
+    span:nth-child(3){
+        justify-self: start;
+        padding-left: 7%;
+    }   
 
    
 }

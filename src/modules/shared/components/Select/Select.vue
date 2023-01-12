@@ -42,9 +42,8 @@ export default {
     const showOptions = ref(false);
 
     const onSelect = (option) => {
-      inputValue.value.value = option.label;
-
-      console.log(inputValue.value.value);
+      
+      inputValue.value.value = option.label;     
 
       contex.emit("on-select", option);
 

@@ -124,6 +124,8 @@ export default {
 }
 
 
+
+
 @media screen and (max-width:1300px) {
   .notification {
     padding: 5px;

@@ -102,6 +102,15 @@ export default {
         background-color: var(--warning-color);
     }
 
+    @media screen and (max-height: 950px) {
+
+        .select-button{
+            height: 50px;
+            min-height: 40px;
+        }
+    }
+
+
     @media screen and (max-width:1300px){
          .select-button{
              width: 24%;

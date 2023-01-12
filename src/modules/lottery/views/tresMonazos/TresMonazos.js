@@ -288,7 +288,7 @@ export default defineComponent( {
       changeTime(data);     
     }
 
-    const onClear = () =>{
+    const onClear = () =>{    
 
       createRipple(event);      
 
@@ -361,6 +361,7 @@ export default defineComponent( {
     };
 
     const onPrintAccept = () =>{
+    
       onClear();
       hidePrintModal();
     }  
@@ -496,6 +497,8 @@ export default defineComponent( {
 
         let raffleNumberType = '';
 
+       
+
         switch (betType.value) {
           case ORDER_BET_TYPE:
             raffleNumberType = t('orderBetTypeLabel');           
@@ -504,7 +507,15 @@ export default defineComponent( {
             raffleNumberType = t('disorderBetTypeLabel');
             break;
           case ORD_DIS_BET_TYPE:
-            raffleNumberType = t('orderDisorderBetTypeLabel');
+            if(mobile.value){
+              
+              raffleNumberType = t('orderDisorderBetTypeLabelShort');
+
+            }else{
+
+              raffleNumberType = t('orderDisorderBetTypeLabel');
+            }
+            
             break;
           case LAST_TWO_BET_TYPE:
             raffleNumberType = t('lastTwoBetTypeLabel');

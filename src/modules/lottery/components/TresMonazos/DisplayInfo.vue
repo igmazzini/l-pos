@@ -3,7 +3,7 @@
         <li v-for="(data, index) of numbers" :key="data">
             <span class="index">{{ getIndex(index) }}</span>
             <span v-for="num of data.numbers" :key="num" class="info-number">{{ num }}</span>
-            <span>{{ subString(data.type,(mobile) ? 3 : 20 ).toUpperCase() }}</span>
+            <span>{{ subString(data.type,(mobile && data.type != t('orderDisorderBetTypeLabelShort') && data.type != `${t('orderDisorderBetTypeLabelShort')} (${t('ticketTypeBlindRooster')})` ) ? 3 : 20 ).toUpperCase() }}</span>
             <span>{{ data.date }}</span>           
             <span>{{formatAmount(data.bet) }}</span>
             <span @click="onDelete(index)" class="option-icon">
@@ -19,7 +19,8 @@
 
 <script>
 
-import { useStore } from 'vuex';
+
+import { useI18n } from 'vue-i18n';
 import { useUI } from '@/modules/shared/composables/useUI';
 
 export default { 
@@ -29,11 +30,13 @@ export default {
   emits: ["on-delete"],
   setup(props, context) {
 
-    const store = useStore();
+
+    const { t } = useI18n();
     const { getIndex, currency, subString, mobile, formatAmount } = useUI();
 
     return {
-      store,
+    
+      t,
       getIndex,
       formatAmount,
       mobile,
@@ -141,7 +144,7 @@ li{
 
 
     li{   
-      grid-template-columns: 5% 15% 1fr 25% 25% 10%;
+      grid-template-columns: 5% 15% 1fr 18% 25% 10%;
     }
 
     .info-number {
