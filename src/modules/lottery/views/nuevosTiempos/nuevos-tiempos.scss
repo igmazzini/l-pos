@@ -145,8 +145,12 @@
         @media screen and (max-width:1300px){
             .display-numbers{    
                 grid-column: 1/5; 
+                grid-row: 1/-1;
+                align-self: center;
+                height: 92px;
 
                 .display-number{
+                   
                    img{
                     width: 80%;
                     margin-left: 5px;
@@ -156,11 +160,20 @@
 
             .display-bet{
                 grid-column: 5/10; 
+                grid-row: 1/-1;
+                align-self: center;
+                height: 92px;
+               
+                
             }
 
             .display-reventado-bet{
                 grid-column: 10/-1; 
-
+                grid-row: 1/-1;
+                align-self: center;
+                height: 92px;
+               
+                
             }
         }
        
@@ -376,6 +389,9 @@
         .game-layout-display{
             width: 100%;
             background-color: whitesmoke;
+            padding-top: 0;
+           
+            
         }
         .game-layout-display::before{
             display: none;

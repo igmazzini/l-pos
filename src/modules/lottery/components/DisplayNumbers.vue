@@ -64,6 +64,7 @@ export default {
         display: flex;
         align-items: flex-start;
         justify-content: center;
+        height: 100%;
     }
     .display-number{
         width: 11rem;

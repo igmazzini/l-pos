@@ -147,6 +147,11 @@
         @media screen and (max-width:1300px){
             .display-numbers{    
                 grid-column: 1/6; 
+                grid-row:1/-1;
+                align-items: center;
+                height: 110px;
+                align-self: center;
+               
 
                 .display-number{
                     width: 2.3em;
@@ -161,7 +166,14 @@
 
             .display-bet{
                 grid-column: 6/-1; 
+                grid-row: 1/-1;
+                height: 110px;
+                justify-content: center;
+                align-self: center;
+               
+                
             }
+           
             
         }
        
@@ -376,6 +388,7 @@
         .game-layout-display{
             width: 100%;
             background-color: whitesmoke;
+            padding-top: 0;
         }
         .game-layout-display::before{
             display: none;
